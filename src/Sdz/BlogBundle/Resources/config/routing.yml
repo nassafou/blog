@@ -1,0 +1,18 @@
+blog_homepage:
+    pattern:  /hello/{name}
+    defaults: { _controller: BlogBundle:Default:index }
+blog_accueil:
+    pattern:  /{page}
+    defaults: { _controller: BlogBundle:Blog:index, id:page }
+blog_voir:
+    pattern:  /article/{id}
+    defaults: { _controller: BlogBundle:Blog:voir }
+blog_ajouter:
+    pattern:  /ajouter
+    defaults: { _controller: BlogBundle:Blog:ajouter }
+blog_modifier:
+    pattern:  /modifier/{id}
+    defaults: { _controller: BlogBundle:Blog:modifier }
+blog_supprimer:
+    pattern:  /supprimer/{id}
+    defaults: { _controller: BlogBundle:Blog:supprimer }
