@@ -133,9 +133,54 @@ class appDevUrlMatcher extends Symfony\Bundle\FrameworkBundle\Routing\Redirectab
 
         }
 
-        // blog_homepage
-        if (0 === strpos($pathinfo, '/hello') && preg_match('#^/hello/(?P<name>[^/]++)$#s', $pathinfo, $matches)) {
-            return $this->mergeDefaults(array_replace($matches, array('_route' => 'blog_homepage')), array (  '_controller' => 'Sdz\\BlogBundle\\Controller\\DefaultController::indexAction',));
+        if (0 === strpos($pathinfo, '/blog')) {
+            // blog_homepage
+            if (0 === strpos($pathinfo, '/blog/hello') && preg_match('#^/blog/hello/(?P<name>[^/]++)$#s', $pathinfo, $matches)) {
+                return $this->mergeDefaults(array_replace($matches, array('_route' => 'blog_homepage')), array (  '_controller' => 'Sdz\\BlogBundle\\Controller\\DefaultController::indexAction',));
+            }
+
+            // blog_accueil
+            if (preg_match('#^/blog(?:/(?P<page>\\d*))?$#s', $pathinfo, $matches)) {
+                return $this->mergeDefaults(array_replace($matches, array('_route' => 'blog_accueil')), array (  '_controller' => 'Sdz\\BlogBundle\\Controller\\BlogController::indexAction',  'page' => 1,));
+            }
+
+            if (0 === strpos($pathinfo, '/blog/a')) {
+                // blog_voir
+                if (0 === strpos($pathinfo, '/blog/article') && preg_match('#^/blog/article/(?P<id>\\d+)$#s', $pathinfo, $matches)) {
+                    return $this->mergeDefaults(array_replace($matches, array('_route' => 'blog_voir')), array (  '_controller' => 'Sdz\\BlogBundle\\Controller\\BlogController::voirAction',));
+                }
+
+                // blog_ajouter
+                if ($pathinfo === '/blog/ajouter') {
+                    return array (  '_controller' => 'Sdz\\BlogBundle\\Controller\\BlogController::ajouterAction',  '_route' => 'blog_ajouter',);
+                }
+
+            }
+
+            // blog_modifier
+            if (0 === strpos($pathinfo, '/blog/modifier') && preg_match('#^/blog/modifier/(?P<id>\\d+)$#s', $pathinfo, $matches)) {
+                return $this->mergeDefaults(array_replace($matches, array('_route' => 'blog_modifier')), array (  '_controller' => 'Sdz\\BlogBundle\\Controller\\BlogController::modifierAction',));
+            }
+
+            // blog_supprimer
+            if (0 === strpos($pathinfo, '/blog/supprimer') && preg_match('#^/blog/supprimer/(?P<id>\\d+)$#s', $pathinfo, $matches)) {
+                return $this->mergeDefaults(array_replace($matches, array('_route' => 'blog_supprimer')), array (  '_controller' => 'Sdz\\BlogBundle\\Controller\\BlogController::supprimerAction',));
+            }
+
+            // blog_menu
+            if ($pathinfo === '/blog/menu') {
+                return array (  '_controller' => 'Sdz\\BlogBundle\\Controller\\BlogController::menuAction',  '_route' => 'blog_menu',);
+            }
+
+            // blog_formulaire
+            if (rtrim($pathinfo, '/') === '/blog') {
+                if (substr($pathinfo, -1) !== '/') {
+                    return $this->redirect($pathinfo.'/', 'blog_formulaire');
+                }
+
+                return array (  '_controller' => 'Sdz\\BlogBundle\\Controller\\BlogController::formulaireAction',  '_route' => 'blog_formulaire',);
+            }
+
         }
 
         // _welcome

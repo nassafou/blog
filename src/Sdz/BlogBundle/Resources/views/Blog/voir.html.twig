@@ -1,0 +1,26 @@
+{% extends "BlogBundle::layout.html.twig" %}
+{% block title %}
+      Lecture d'un article  - {{ parent() }}
+  {% endblock%}
+
+{% block blog_body %}
+        
+     <h2>  {{ article.titre }} </h2>
+     <i> par {{ article.auteur }}, le {{ article.date | date('d/m/Y') }} </i>
+    <div class="well">
+        {{ article.contenu }}
+        
+    </div>
+    <p>
+        <a href="{{ path('blog_accueil' ) }}" class="btn">
+            <i class="icon-chevron">Retour a la liste</i>
+        </a>
+        <a href="{{ path('blog_modifier', {'id': article.id }) }}" class="btn">
+            <i class="icon-left"> Modifier l'article </i>
+        </a>
+        <a href="{{ path('blog_supprimer', {'id': article.id }) }}" class="btn">
+            <i class="icon-left">Supprimer l'article </i>
+        </a>
+    </p>
+
+{% endblock %}

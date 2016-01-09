@@ -1,0 +1,22 @@
+{% extends "BlogBundle::layout.html.twig" %}
+
+  {% block title %}
+      Accueil - {{ parent() }}
+  {% endblock%}
+
+{% block blog_body %}
+     <h2> Liste des articles </h2>
+    <ul> 
+         {% for article in articles %}
+              <li>
+           <a href="{{ path('blog_voir', {'id':  article.id } )}}">{{ article.titre }}</a>,
+           Par {{ article.auteur }},
+           le {{ article.date |date('d/m/Y') }}
+        </li>
+    {% else %}
+        <li> Pas (encore !) d'article </li>
+           {% endfor %}
+        
+    </ul>
+
+{% endblock %}
