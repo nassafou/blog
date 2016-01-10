@@ -12,10 +12,8 @@
 namespace Symfony\Component\DependencyInjection\Tests\Compiler;
 
 use Symfony\Component\DependencyInjection\Scope;
-
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Compiler\AnalyzeServiceReferencesPass;
-use Symfony\Component\DependencyInjection\Compiler\Compiler;
 use Symfony\Component\DependencyInjection\Compiler\RepeatedPass;
 use Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass;
 use Symfony\Component\DependencyInjection\Reference;
@@ -112,6 +110,84 @@ class InlineServiceDefinitionsPassTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($a, $inlinedArguments[0]);
     }
 
+    public function testProcessInlinesPrivateFactoryReference()
+    {
+        $container = new ContainerBuilder();
+
+        $container->register('a')->setPublic(false);
+        $b = $container
+            ->register('b')
+            ->setPublic(false)
+            ->setFactoryService('a')
+        ;
+
+        $container
+            ->register('foo')
+            ->setArguments(array(
+                $ref = new Reference('b'),
+            ));
+
+        $this->process($container);
+
+        $inlinedArguments = $container->getDefinition('foo')->getArguments();
+        $this->assertSame($b, $inlinedArguments[0]);
+    }
+
+    public function testProcessDoesNotInlinePrivateFactoryIfReferencedMultipleTimesWithinTheSameDefinition()
+    {
+        $container = new ContainerBuilder();
+        $container
+            ->register('a')
+        ;
+        $container
+            ->register('b')
+            ->setPublic(false)
+            ->setFactoryService('a')
+        ;
+
+        $container
+            ->register('foo')
+            ->setArguments(array(
+                    $ref1 = new Reference('b'),
+                    $ref2 = new Reference('b'),
+                ))
+        ;
+        $this->process($container);
+
+        $args = $container->getDefinition('foo')->getArguments();
+        $this->assertSame($ref1, $args[0]);
+        $this->assertSame($ref2, $args[1]);
+    }
+
+    public function testProcessDoesNotInlineReferenceWhenUsedByInlineFactory()
+    {
+        $container = new ContainerBuilder();
+        $container
+            ->register('a')
+        ;
+        $container
+            ->register('b')
+            ->setPublic(false)
+            ->setFactoryService('a')
+        ;
+
+        $inlineFactory = new Definition();
+        $inlineFactory->setPublic(false);
+        $inlineFactory->setFactoryService('b');
+
+        $container
+            ->register('foo')
+            ->setArguments(array(
+                    $ref = new Reference('b'),
+                    $inlineFactory,
+                ))
+        ;
+        $this->process($container);
+
+        $args = $container->getDefinition('foo')->getArguments();
+        $this->assertSame($ref, $args[0]);
+    }
+
     public function testProcessInlinesOnlyIfSameScope()
     {
         $container = new ContainerBuilder();
@@ -124,6 +200,41 @@ class InlineServiceDefinitionsPassTest extends \PHPUnit_Framework_TestCase
         $arguments = $b->getArguments();
         $this->assertEquals(new Reference('a'), $arguments[0]);
         $this->assertTrue($container->hasDefinition('a'));
+    }
+
+    public function testProcessDoesNotInlineWhenServiceIsPrivateButLazy()
+    {
+        $container = new ContainerBuilder();
+        $container
+            ->register('foo')
+            ->setPublic(false)
+            ->setLazy(true)
+        ;
+
+        $container
+            ->register('service')
+            ->setArguments(array($ref = new Reference('foo')))
+        ;
+
+        $this->process($container);
+
+        $arguments = $container->getDefinition('service')->getArguments();
+        $this->assertSame($ref, $arguments[0]);
+    }
+
+    public function testProcessDoesNotInlineWhenServiceReferencesItself()
+    {
+        $container = new ContainerBuilder();
+        $container
+            ->register('foo')
+            ->setPublic(false)
+            ->addMethodCall('foo', array($ref = new Reference('foo')))
+        ;
+
+        $this->process($container);
+
+        $calls = $container->getDefinition('foo')->getMethodCalls();
+        $this->assertSame($ref, $calls[0][1][0]);
     }
 
     protected function process(ContainerBuilder $container)

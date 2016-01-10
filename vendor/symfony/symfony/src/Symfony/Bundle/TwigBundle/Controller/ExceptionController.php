@@ -16,6 +16,7 @@ use Symfony\Component\HttpKernel\Exception\FlattenException;
 use Symfony\Component\HttpKernel\Log\DebugLoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Templating\TemplateReferenceInterface;
 
 /**
  * ExceptionController.
@@ -39,34 +40,31 @@ class ExceptionController
      * @param Request              $request   The request
      * @param FlattenException     $exception A FlattenException instance
      * @param DebugLoggerInterface $logger    A DebugLoggerInterface instance
-     * @param string               $format    The format to use for rendering (html, xml, ...)
      *
      * @return Response
      *
      * @throws \InvalidArgumentException When the exception template does not exist
      */
-    public function showAction(Request $request, FlattenException $exception, DebugLoggerInterface $logger = null, $format = 'html')
+    public function showAction(Request $request, FlattenException $exception, DebugLoggerInterface $logger = null)
     {
-        $request->setRequestFormat($format);
-
         $currentContent = $this->getAndCleanOutputBuffering($request->headers->get('X-Php-Ob-Level', -1));
 
         $code = $exception->getStatusCode();
 
         return new Response($this->twig->render(
-            $this->findTemplate($request, $format, $code, $this->debug),
+            (string) $this->findTemplate($request, $request->getRequestFormat(), $code, $this->debug),
             array(
-                'status_code'    => $code,
-                'status_text'    => isset(Response::$statusTexts[$code]) ? Response::$statusTexts[$code] : '',
-                'exception'      => $exception,
-                'logger'         => $logger,
+                'status_code' => $code,
+                'status_text' => isset(Response::$statusTexts[$code]) ? Response::$statusTexts[$code] : '',
+                'exception' => $exception,
+                'logger' => $logger,
                 'currentContent' => $currentContent,
             )
         ));
     }
 
     /**
-     * @param integer $startObLevel
+     * @param int $startObLevel
      *
      * @return string
      */
@@ -88,10 +86,10 @@ class ExceptionController
     /**
      * @param Request $request
      * @param string  $format
-     * @param integer $code       An HTTP response status code
-     * @param Boolean $debug
+     * @param int     $code    An HTTP response status code
+     * @param bool    $debug
      *
-     * @return TemplateReference
+     * @return TemplateReferenceInterface
      */
     protected function findTemplate(Request $request, $format, $code, $debug)
     {
@@ -117,7 +115,7 @@ class ExceptionController
         // default to a generic HTML exception
         $request->setRequestFormat('html');
 
-        return new TemplateReference('TwigBundle', 'Exception', $name, 'html', 'twig');
+        return new TemplateReference('TwigBundle', 'Exception', $debug ? 'exception_full' : $name, 'html', 'twig');
     }
 
     // to be removed when the minimum required version of Twig is >= 2.0

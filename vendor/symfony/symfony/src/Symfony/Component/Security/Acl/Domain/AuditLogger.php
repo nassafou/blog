@@ -16,16 +16,16 @@ use Symfony\Component\Security\Acl\Model\EntryInterface;
 use Symfony\Component\Security\Acl\Model\AuditLoggerInterface;
 
 /**
- * Base audit logger implementation
+ * Base audit logger implementation.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
 abstract class AuditLogger implements AuditLoggerInterface
 {
     /**
-     * Performs some checks if logging was requested
+     * Performs some checks if logging was requested.
      *
-     * @param Boolean        $granted
+     * @param bool           $granted
      * @param EntryInterface $ace
      */
     public function logIfNeeded($granted, EntryInterface $ace)
@@ -42,9 +42,9 @@ abstract class AuditLogger implements AuditLoggerInterface
     }
 
     /**
-     * This method is only called when logging is needed
+     * This method is only called when logging is needed.
      *
-     * @param Boolean        $granted
+     * @param bool           $granted
      * @param EntryInterface $ace
      */
     abstract protected function doLog($granted, EntryInterface $ace);

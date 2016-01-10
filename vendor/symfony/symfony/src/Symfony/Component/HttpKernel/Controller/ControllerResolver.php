@@ -22,8 +22,6 @@ use Symfony\Component\HttpFoundation\Request;
  * the controller method arguments.
  *
  * @author Fabien Potencier <fabien@symfony.com>
- *
- * @api
  */
 class ControllerResolver implements ControllerResolverInterface
 {
@@ -47,12 +45,10 @@ class ControllerResolver implements ControllerResolverInterface
      *
      * @param Request $request A Request instance
      *
-     * @return mixed|Boolean A PHP callable representing the Controller,
-     *                       or false if this resolver is not able to determine the controller
+     * @return mixed|bool A PHP callable representing the Controller,
+     *                    or false if this resolver is not able to determine the controller
      *
      * @throws \InvalidArgumentException|\LogicException If the controller can't be found
-     *
-     * @api
      */
     public function getController(Request $request)
     {
@@ -64,13 +60,21 @@ class ControllerResolver implements ControllerResolverInterface
             return false;
         }
 
-        if (is_array($controller) || (is_object($controller) && method_exists($controller, '__invoke'))) {
+        if (is_array($controller)) {
             return $controller;
+        }
+
+        if (is_object($controller)) {
+            if (method_exists($controller, '__invoke')) {
+                return $controller;
+            }
+
+            throw new \InvalidArgumentException(sprintf('Controller "%s" for URI "%s" is not callable.', get_class($controller), $request->getPathInfo()));
         }
 
         if (false === strpos($controller, ':')) {
             if (method_exists($controller, '__invoke')) {
-                return new $controller;
+                return new $controller();
             } elseif (function_exists($controller)) {
                 return $controller;
             }
@@ -79,7 +83,7 @@ class ControllerResolver implements ControllerResolverInterface
         $callable = $this->createController($controller);
 
         if (!is_callable($callable)) {
-            throw new \InvalidArgumentException(sprintf('The controller for URI "%s" is not callable.', $request->getPathInfo()));
+            throw new \InvalidArgumentException(sprintf('Controller "%s" for URI "%s" is not callable.', $controller, $request->getPathInfo()));
         }
 
         return $callable;
@@ -94,8 +98,6 @@ class ControllerResolver implements ControllerResolverInterface
      * @return array
      *
      * @throws \RuntimeException When value for argument given is not provided
-     *
-     * @api
      */
     public function getArguments(Request $request, $controller)
     {
@@ -143,7 +145,7 @@ class ControllerResolver implements ControllerResolverInterface
      *
      * @param string $controller A Controller string
      *
-     * @return mixed A PHP callable
+     * @return callable A PHP callable
      *
      * @throws \InvalidArgumentException
      */

@@ -15,21 +15,21 @@ use Symfony\Component\Security\Acl\Exception\InvalidDomainObjectException;
 use Symfony\Component\Security\Acl\Model\ObjectIdentityRetrievalStrategyInterface;
 
 /**
- * Strategy to be used for retrieving object identities from domain objects
+ * Strategy to be used for retrieving object identities from domain objects.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
 class ObjectIdentityRetrievalStrategy implements ObjectIdentityRetrievalStrategyInterface
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getObjectIdentity($domainObject)
     {
         try {
             return ObjectIdentity::fromDomainObject($domainObject);
-        } catch (InvalidDomainObjectException $failed) {
-            return null;
+        } catch (InvalidDomainObjectException $e) {
+            return;
         }
     }
 }

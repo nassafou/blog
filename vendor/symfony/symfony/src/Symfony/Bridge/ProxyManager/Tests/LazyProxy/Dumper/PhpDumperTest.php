@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Symfony\Bridge\ProxyManager\LazyProxy\Tests\Dumper;
+namespace Symfony\Bridge\ProxyManager\Tests\LazyProxy\Dumper;
 
 use Symfony\Bridge\ProxyManager\LazyProxy\PhpDumper\ProxyDumper;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -17,7 +17,7 @@ use Symfony\Component\DependencyInjection\Dumper\PhpDumper;
 
 /**
  * Integration tests for {@see \Symfony\Component\DependencyInjection\Dumper\PhpDumper} combined
- * with the ProxyManager bridge
+ * with the ProxyManager bridge.
  *
  * @author Marco Pivetta <ocramius@gmail.com>
  */
@@ -45,7 +45,7 @@ class PhpDumperTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Verifies that the generated container retrieves the same proxy instance on multiple subsequent requests
+     * Verifies that the generated container retrieves the same proxy instance on multiple subsequent requests.
      */
     public function testDumpContainerWithProxyServiceWillShareProxies()
     {

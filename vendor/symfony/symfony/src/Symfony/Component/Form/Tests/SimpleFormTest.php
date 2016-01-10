@@ -109,10 +109,10 @@ class SimpleFormTest extends AbstractFormTest
             }));
 
         $config = new FormConfigBuilder('name', null, $this->dispatcher);
-        $config->addEventListener(FormEvents::PRE_BIND, array($mock, 'preBind'));
+        $config->addEventListener(FormEvents::PRE_SUBMIT, array($mock, 'preBind'));
         $form = new Form($config);
 
-        $form->bind(false);
+        $form->submit(false);
 
         $this->assertTrue($form->isValid());
         $this->assertNull($form->getData());
@@ -170,34 +170,28 @@ class SimpleFormTest extends AbstractFormTest
         $this->assertFalse($child->isRequired());
     }
 
-    public function testAlwaysDisabledIfParentDisabled()
+    /**
+     * @dataProvider getDisabledStates
+     */
+    public function testAlwaysDisabledIfParentDisabled($parentDisabled, $disabled, $result)
     {
-        $parent = $this->getBuilder()->setDisabled(true)->getForm();
-        $child = $this->getBuilder()->setDisabled(false)->getForm();
+        $parent = $this->getBuilder()->setDisabled($parentDisabled)->getForm();
+        $child = $this->getBuilder()->setDisabled($disabled)->getForm();
 
         $child->setParent($parent);
 
-        $this->assertTrue($child->isDisabled());
+        $this->assertSame($result, $child->isDisabled());
     }
 
-    public function testDisabled()
+    public function getDisabledStates()
     {
-        $parent = $this->getBuilder()->setDisabled(false)->getForm();
-        $child = $this->getBuilder()->setDisabled(true)->getForm();
-
-        $child->setParent($parent);
-
-        $this->assertTrue($child->isDisabled());
-    }
-
-    public function testNotDisabled()
-    {
-        $parent = $this->getBuilder()->setDisabled(false)->getForm();
-        $child = $this->getBuilder()->setDisabled(false)->getForm();
-
-        $child->setParent($parent);
-
-        $this->assertFalse($child->isDisabled());
+        return array(
+            // parent, button, result
+            array(true, true, true),
+            array(true, false, true),
+            array(false, true, true),
+            array(false, false, false),
+        );
     }
 
     public function testGetRootReturnsRootOfParent()
@@ -524,7 +518,7 @@ class SimpleFormTest extends AbstractFormTest
                 '' => '',
                 // direction is reversed!
                 'norm' => 'filteredclient',
-                'filterednorm' => 'cleanedclient'
+                'filterednorm' => 'cleanedclient',
             )))
             ->addModelTransformer(new FixedDataTransformer(array(
                 '' => '',

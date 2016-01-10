@@ -25,10 +25,6 @@ class KernelForTest extends Kernel
     {
     }
 
-    public function init()
-    {
-    }
-
     public function registerBundleDirs()
     {
     }
@@ -49,6 +45,6 @@ class KernelForTest extends Kernel
 
     public function setIsBooted($value)
     {
-        $this->booted = (Boolean) $value;
+        $this->booted = (bool) $value;
     }
 }

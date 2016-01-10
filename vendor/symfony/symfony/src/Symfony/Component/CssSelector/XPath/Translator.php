@@ -17,12 +17,11 @@ use Symfony\Component\CssSelector\Node\NodeInterface;
 use Symfony\Component\CssSelector\Node\SelectorNode;
 use Symfony\Component\CssSelector\Parser\Parser;
 use Symfony\Component\CssSelector\Parser\ParserInterface;
-use Symfony\Component\CssSelector\XPath\Extension;
 
 /**
  * XPath expression translator interface.
  *
- * This component is a port of the Python cssselector library,
+ * This component is a port of the Python cssselect library,
  * which is copyright Ian Bicking, @see https://github.com/SimonSapin/cssselect.
  *
  * @author Jean-François Simon <jeanfrancois.simon@sensiolabs.com>
@@ -77,7 +76,7 @@ class Translator implements TranslatorInterface
         $this->mainParser = $parser ?: new Parser();
 
         $this
-            ->registerExtension(new Extension\NodeExtension($this))
+            ->registerExtension(new Extension\NodeExtension())
             ->registerExtension(new Extension\CombinationExtension())
             ->registerExtension(new Extension\FunctionExtension())
             ->registerExtension(new Extension\PseudoClassExtension())
@@ -124,17 +123,15 @@ class Translator implements TranslatorInterface
         $selectors = $this->parseSelectors($cssExpr);
 
         /** @var SelectorNode $selector */
-        foreach ($selectors as $selector) {
+        foreach ($selectors as $index => $selector) {
             if (null !== $selector->getPseudoElement()) {
                 throw new ExpressionErrorException('Pseudo-elements are not supported.');
             }
+
+            $selectors[$index] = $this->selectorToXPath($selector, $prefix);
         }
 
-        $translator = $this;
-
-        return implode(' | ', array_map(function (SelectorNode $selector) use ($translator, $prefix) {
-            return $translator->selectorToXPath($selector, $prefix);
-        }, $selectors));
+        return implode(' | ', $selectors);
     }
 
     /**
@@ -208,7 +205,7 @@ class Translator implements TranslatorInterface
             throw new ExpressionErrorException(sprintf('Node "%s" not supported.', $node->getNodeName()));
         }
 
-        return call_user_func($this->nodeTranslators[$node->getNodeName()], $node);
+        return call_user_func($this->nodeTranslators[$node->getNodeName()], $node, $this);
     }
 
     /**
@@ -230,7 +227,7 @@ class Translator implements TranslatorInterface
     }
 
     /**
-     * @param XPathExpr $xpath
+     * @param XPathExpr    $xpath
      * @param FunctionNode $function
      *
      * @return XPathExpr

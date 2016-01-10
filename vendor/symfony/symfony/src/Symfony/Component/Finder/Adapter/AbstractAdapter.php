@@ -19,26 +19,26 @@ namespace Symfony\Component\Finder\Adapter;
 abstract class AbstractAdapter implements AdapterInterface
 {
     protected $followLinks = false;
-    protected $mode        = 0;
-    protected $minDepth    = 0;
-    protected $maxDepth    = PHP_INT_MAX;
-    protected $exclude     = array();
-    protected $names       = array();
-    protected $notNames    = array();
-    protected $contains    = array();
+    protected $mode = 0;
+    protected $minDepth = 0;
+    protected $maxDepth = PHP_INT_MAX;
+    protected $exclude = array();
+    protected $names = array();
+    protected $notNames = array();
+    protected $contains = array();
     protected $notContains = array();
-    protected $sizes       = array();
-    protected $dates       = array();
-    protected $filters     = array();
-    protected $sort        = false;
-    protected $paths       = array();
-    protected $notPaths    = array();
+    protected $sizes = array();
+    protected $dates = array();
+    protected $filters = array();
+    protected $sort = false;
+    protected $paths = array();
+    protected $notPaths = array();
     protected $ignoreUnreadableDirs = false;
 
     private static $areSupported = array();
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function isSupported()
     {
@@ -216,7 +216,7 @@ abstract class AbstractAdapter implements AdapterInterface
      */
     public function ignoreUnreadableDirs($ignore = true)
     {
-        $this->ignoreUnreadableDirs = (Boolean) $ignore;
+        $this->ignoreUnreadableDirs = (bool) $ignore;
 
         return $this;
     }
@@ -228,9 +228,9 @@ abstract class AbstractAdapter implements AdapterInterface
      * isSupported in the adapters as the generic implementation provides a cache
      * layer.
      *
-     * @see isSupported
+     * @see isSupported()
      *
-     * @return Boolean Whether the adapter is supported
+     * @return bool Whether the adapter is supported
      */
     abstract protected function canBeUsed();
 }

@@ -36,7 +36,7 @@ class ArrayNodeDefinition extends NodeDefinition implements ParentNodeDefinition
     protected $normalizeKeys;
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function __construct($name, NodeParentInterface $parent = null)
     {
@@ -105,7 +105,7 @@ class ArrayNodeDefinition extends NodeDefinition implements ParentNodeDefinition
     /**
      * Adds children with a default value when none are defined.
      *
-     * @param integer|string|array|null $children The number of children|The child name|The children names to be added
+     * @param int|string|array|null $children The number of children|The child name|The children names to be added
      *
      * This method is applicable to prototype nodes only.
      *
@@ -184,8 +184,8 @@ class ArrayNodeDefinition extends NodeDefinition implements ParentNodeDefinition
      *
      * This method is applicable to prototype nodes only.
      *
-     * @param string  $name          The name of the key
-     * @param Boolean $removeKeyItem Whether or not the key item should be removed.
+     * @param string $name          The name of the key
+     * @param bool   $removeKeyItem Whether or not the key item should be removed.
      *
      * @return ArrayNodeDefinition
      */
@@ -200,7 +200,7 @@ class ArrayNodeDefinition extends NodeDefinition implements ParentNodeDefinition
     /**
      * Sets whether the node can be unset.
      *
-     * @param Boolean $allow
+     * @param bool $allow
      *
      * @return ArrayNodeDefinition
      */
@@ -235,7 +235,7 @@ class ArrayNodeDefinition extends NodeDefinition implements ParentNodeDefinition
             ->treatNullLike(array('enabled' => true))
             ->beforeNormalization()
                 ->ifArray()
-                ->then(function($v) {
+                ->then(function ($v) {
                     $v['enabled'] = isset($v['enabled']) ? $v['enabled'] : true;
 
                     return $v;
@@ -287,9 +287,10 @@ class ArrayNodeDefinition extends NodeDefinition implements ParentNodeDefinition
      * Allows extra config keys to be specified under an array without
      * throwing an exception.
      *
-     * Those config values are simply ignored. This should be used only
-     * in special cases where you want to send an entire configuration
-     * array through a special tree that processes only part of the array.
+     * Those config values are simply ignored and removed from the
+     * resulting array. This should be used only in special cases where
+     * you want to send an entire configuration array through a special
+     * tree that processes only part of the array.
      *
      * @return ArrayNodeDefinition
      */
@@ -303,13 +304,13 @@ class ArrayNodeDefinition extends NodeDefinition implements ParentNodeDefinition
     /**
      * Sets key normalization.
      *
-     * @param Boolean $bool Whether to enable key normalization
+     * @param bool $bool Whether to enable key normalization
      *
      * @return ArrayNodeDefinition
      */
     public function normalizeKeys($bool)
     {
-        $this->normalizeKeys = (Boolean) $bool;
+        $this->normalizeKeys = (bool) $bool;
 
         return $this;
     }
@@ -337,7 +338,7 @@ class ArrayNodeDefinition extends NodeDefinition implements ParentNodeDefinition
     }
 
     /**
-     * Returns a node builder to be used to add children and prototype
+     * Returns a node builder to be used to add children and prototype.
      *
      * @return NodeBuilder The node builder
      */
@@ -351,7 +352,7 @@ class ArrayNodeDefinition extends NodeDefinition implements ParentNodeDefinition
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function createNode()
     {
@@ -480,7 +481,7 @@ class ArrayNodeDefinition extends NodeDefinition implements ParentNodeDefinition
                 );
             }
 
-            if (null !== $this->key && (null === $this->addDefaultChildren || is_integer($this->addDefaultChildren) && $this->addDefaultChildren > 0)) {
+            if (null !== $this->key && (null === $this->addDefaultChildren || is_int($this->addDefaultChildren) && $this->addDefaultChildren > 0)) {
                 throw new InvalidDefinitionException(
                     sprintf('->addDefaultChildrenIfNoneSet() should set default children names as ->useAttributeAsKey() is used at path "%s"', $path)
                 );

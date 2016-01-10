@@ -16,6 +16,8 @@ use Symfony\Component\Validator\Constraints\Collection;
 use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Constraints\Range;
 use Symfony\Component\Validator\Constraints\Choice;
+use Symfony\Component\Validator\Constraints\Regex;
+use Symfony\Component\Validator\Exception\MappingException;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 use Symfony\Component\Validator\Mapping\Loader\XmlFileLoader;
 use Symfony\Component\Validator\Tests\Fixtures\ConstraintA;
@@ -68,6 +70,22 @@ class XmlFileLoaderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $metadata);
     }
 
+    public function testLoadClassMetadataWithNonStrings()
+    {
+        $loader = new XmlFileLoader(__DIR__.'/constraint-mapping-non-strings.xml');
+        $metadata = new ClassMetadata('Symfony\Component\Validator\Tests\Fixtures\Entity');
+
+        $loader->loadClassMetadata($metadata);
+
+        $expected = new ClassMetadata('Symfony\Component\Validator\Tests\Fixtures\Entity');
+        $expected->addPropertyConstraint('firstName', new Regex(array('pattern' => '/^1/', 'match' => false)));
+
+        $properties = $metadata->getPropertyMetadata('firstName');
+        $constraints = $properties[0]->getConstraints();
+
+        $this->assertFalse($constraints[0]->match);
+    }
+
     public function testLoadGroupSequenceProvider()
     {
         $loader = new XmlFileLoader(__DIR__.'/constraint-mapping.xml');
@@ -81,15 +99,28 @@ class XmlFileLoaderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $metadata);
     }
 
-    /**
-     * @expectedException        \Symfony\Component\Validator\Exception\MappingException
-     * @expectedExceptionMessage Document types are not allowed.
-     */
-    public function testDocTypeIsNotAllowed()
+    public function testThrowExceptionIfDocTypeIsSet()
     {
         $loader = new XmlFileLoader(__DIR__.'/withdoctype.xml');
         $metadata = new ClassMetadata('Symfony\Component\Validator\Tests\Fixtures\Entity');
 
+        $this->setExpectedException('\Symfony\Component\Validator\Exception\MappingException');
         $loader->loadClassMetadata($metadata);
+    }
+
+    /**
+     * @see https://github.com/symfony/symfony/pull/12158
+     */
+    public function testDoNotModifyStateIfExceptionIsThrown()
+    {
+        $loader = new XmlFileLoader(__DIR__.'/withdoctype.xml');
+        $metadata = new ClassMetadata('Symfony\Component\Validator\Tests\Fixtures\Entity');
+
+        try {
+            $loader->loadClassMetadata($metadata);
+        } catch (MappingException $e) {
+            $this->setExpectedException('\Symfony\Component\Validator\Exception\MappingException');
+            $loader->loadClassMetadata($metadata);
+        }
     }
 }

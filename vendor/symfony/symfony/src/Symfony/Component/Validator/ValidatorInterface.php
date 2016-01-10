@@ -11,14 +11,10 @@
 
 namespace Symfony\Component\Validator;
 
-use Symfony\Component\Validator\Constraint;
-
 /**
  * Validates values and graphs of objects and arrays.
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
- *
- * @api
  */
 interface ValidatorInterface
 {
@@ -30,13 +26,11 @@ interface ValidatorInterface
      *
      * @param mixed      $value    The value to validate
      * @param array|null $groups   The validation groups to validate.
-     * @param Boolean    $traverse Whether to traverse the value if it is traversable.
-     * @param Boolean    $deep     Whether to traverse nested traversable values recursively.
+     * @param bool       $traverse Whether to traverse the value if it is traversable.
+     * @param bool       $deep     Whether to traverse nested traversable values recursively.
      *
      * @return ConstraintViolationListInterface A list of constraint violations. If the
      *                                          list is empty, validation succeeded.
-     *
-     * @api
      */
     public function validate($value, $groups = null, $traverse = false, $deep = false);
 
@@ -52,8 +46,6 @@ interface ValidatorInterface
      *
      * @return ConstraintViolationListInterface A list of constraint violations. If the
      *                                          list is empty, validation succeeded.
-     *
-     * @api
      */
     public function validateProperty($containingValue, $property, $groups = null);
 
@@ -71,8 +63,6 @@ interface ValidatorInterface
      *
      * @return ConstraintViolationListInterface A list of constraint violations. If the
      *                                          list is empty, validation succeeded.
-     *
-     * @api
      */
     public function validatePropertyValue($containingValue, $property, $value, $groups = null);
 
@@ -85,8 +75,6 @@ interface ValidatorInterface
      *
      * @return ConstraintViolationListInterface A list of constraint violations. If the
      *                                          list is empty, validation succeeded.
-     *
-     * @api
      */
     public function validateValue($value, $constraints, $groups = null);
 
@@ -94,8 +82,6 @@ interface ValidatorInterface
      * Returns the factory for metadata instances.
      *
      * @return MetadataFactoryInterface The metadata factory.
-     *
-     * @api
      */
     public function getMetadataFactory();
 }

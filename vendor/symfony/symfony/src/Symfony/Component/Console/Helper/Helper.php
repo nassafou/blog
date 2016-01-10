@@ -41,22 +41,22 @@ abstract class Helper implements HelperInterface
     }
 
     /**
-     * Returns the length of a string, using mb_strlen if it is available.
+     * Returns the length of a string, using mb_strwidth if it is available.
      *
      * @param string $string The string to check its length
      *
-     * @return integer The length of the string
+     * @return int The length of the string
      */
     protected function strlen($string)
     {
-        if (!function_exists('mb_strlen')) {
+        if (!function_exists('mb_strwidth')) {
             return strlen($string);
         }
 
-        if (false === $encoding = mb_detect_encoding($string)) {
+        if (false === $encoding = mb_detect_encoding($string, null, true)) {
             return strlen($string);
         }
 
-        return mb_strlen($string, $encoding);
+        return mb_strwidth($string, $encoding);
     }
 }

@@ -19,26 +19,27 @@ namespace Symfony\Component\Security\Acl\Model;
 interface PermissionGrantingStrategyInterface
 {
     /**
-     * Determines whether access to a domain object is to be granted
+     * Determines whether access to a domain object is to be granted.
      *
      * @param AclInterface $acl
      * @param array        $masks
      * @param array        $sids
-     * @param Boolean      $administrativeMode
-     * @return Boolean
+     * @param bool         $administrativeMode
+     *
+     * @return bool
      */
     public function isGranted(AclInterface $acl, array $masks, array $sids, $administrativeMode = false);
 
     /**
-     * Determines whether access to a domain object's field is to be granted
+     * Determines whether access to a domain object's field is to be granted.
      *
      * @param AclInterface $acl
      * @param string       $field
      * @param array        $masks
      * @param array        $sids
-     * @param Boolean      $administrativeMode
+     * @param bool         $administrativeMode
      *
-     * @return Boolean
+     * @return bool
      */
     public function isFieldGranted(AclInterface $acl, $field, array $masks, array $sids, $administrativeMode = false);
 }

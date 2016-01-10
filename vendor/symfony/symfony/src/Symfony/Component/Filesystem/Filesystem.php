@@ -27,9 +27,9 @@ class Filesystem
      *
      * By default, if the target already exists, it is not overridden.
      *
-     * @param string  $originFile The original filename
-     * @param string  $targetFile The target filename
-     * @param boolean $override   Whether to override an existing file or not
+     * @param string $originFile The original filename
+     * @param string $targetFile The target filename
+     * @param bool   $override   Whether to override an existing file or not
      *
      * @throws IOException When copy fails
      */
@@ -41,16 +41,16 @@ class Filesystem
 
         $this->mkdir(dirname($targetFile));
 
-        if (!$override && is_file($targetFile)) {
+        $doCopy = true;
+        if (!$override && null === parse_url($originFile, PHP_URL_HOST) && is_file($targetFile)) {
             $doCopy = filemtime($originFile) > filemtime($targetFile);
-        } else {
-            $doCopy = true;
         }
 
         if ($doCopy) {
             // https://bugs.php.net/bug.php?id=64634
             $source = fopen($originFile, 'r');
-            $target = fopen($targetFile, 'w+');
+            // Stream context created to allow files overwrite when using FTP stream wrapper - disabled by default
+            $target = fopen($targetFile, 'w', null, stream_context_create(array('ftp' => array('overwrite' => true))));
             stream_copy_to_stream($source, $target);
             fclose($source);
             fclose($target);
@@ -66,7 +66,7 @@ class Filesystem
      * Creates a directory recursively.
      *
      * @param string|array|\Traversable $dirs The directory path
-     * @param integer                   $mode The directory mode
+     * @param int                       $mode The directory mode
      *
      * @throws IOException On any directory creation failure
      */
@@ -78,7 +78,14 @@ class Filesystem
             }
 
             if (true !== @mkdir($dir, $mode, true)) {
-                throw new IOException(sprintf('Failed to create %s', $dir));
+                $error = error_get_last();
+                if (!is_dir($dir)) {
+                    // The directory was not created by a concurrent process. Let's throw an exception with a developer friendly error message if we have one
+                    if ($error) {
+                        throw new IOException(sprintf('Failed to create "%s": %s.', $dir, $error['message']));
+                    }
+                    throw new IOException(sprintf('Failed to create "%s"', $dir));
+                }
             }
         }
     }
@@ -88,7 +95,7 @@ class Filesystem
      *
      * @param string|array|\Traversable $files A filename, an array of files, or a \Traversable instance to check
      *
-     * @return Boolean true if the file exists, false otherwise
+     * @return bool true if the file exists, false otherwise
      */
     public function exists($files)
     {
@@ -105,8 +112,8 @@ class Filesystem
      * Sets access and modification time of file.
      *
      * @param string|array|\Traversable $files A filename, an array of files, or a \Traversable instance to create
-     * @param integer                   $time  The touch time as a unix timestamp
-     * @param integer                   $atime The access time as a unix timestamp
+     * @param int                       $time  The touch time as a Unix timestamp
+     * @param int                       $atime The access time as a Unix timestamp
      *
      * @throws IOException When touch fails
      */
@@ -144,7 +151,7 @@ class Filesystem
                 }
             } else {
                 // https://bugs.php.net/bug.php?id=52176
-                if (defined('PHP_WINDOWS_VERSION_MAJOR') && is_dir($file)) {
+                if ('\\' === DIRECTORY_SEPARATOR && is_dir($file)) {
                     if (true !== @rmdir($file)) {
                         throw new IOException(sprintf('Failed to remove file %s', $file));
                     }
@@ -161,30 +168,30 @@ class Filesystem
      * Change mode for an array of files or directories.
      *
      * @param string|array|\Traversable $files     A filename, an array of files, or a \Traversable instance to change mode
-     * @param integer                   $mode      The new mode (octal)
-     * @param integer                   $umask     The mode mask (octal)
-     * @param Boolean                   $recursive Whether change the mod recursively or not
+     * @param int                       $mode      The new mode (octal)
+     * @param int                       $umask     The mode mask (octal)
+     * @param bool                      $recursive Whether change the mod recursively or not
      *
      * @throws IOException When the change fail
      */
     public function chmod($files, $mode, $umask = 0000, $recursive = false)
     {
         foreach ($this->toIterator($files) as $file) {
-            if ($recursive && is_dir($file) && !is_link($file)) {
-                $this->chmod(new \FilesystemIterator($file), $mode, $umask, true);
-            }
             if (true !== @chmod($file, $mode & ~$umask)) {
                 throw new IOException(sprintf('Failed to chmod file %s', $file));
+            }
+            if ($recursive && is_dir($file) && !is_link($file)) {
+                $this->chmod(new \FilesystemIterator($file), $mode, $umask, true);
             }
         }
     }
 
     /**
-     * Change the owner of an array of files or directories
+     * Change the owner of an array of files or directories.
      *
      * @param string|array|\Traversable $files     A filename, an array of files, or a \Traversable instance to change owner
      * @param string                    $user      The new owner user name
-     * @param Boolean                   $recursive Whether change the owner recursively or not
+     * @param bool                      $recursive Whether change the owner recursively or not
      *
      * @throws IOException When the change fail
      */
@@ -207,11 +214,11 @@ class Filesystem
     }
 
     /**
-     * Change the group of an array of files or directories
+     * Change the group of an array of files or directories.
      *
      * @param string|array|\Traversable $files     A filename, an array of files, or a \Traversable instance to change group
      * @param string                    $group     The group name
-     * @param Boolean                   $recursive Whether change the group recursively or not
+     * @param bool                      $recursive Whether change the group recursively or not
      *
      * @throws IOException When the change fail
      */
@@ -222,7 +229,7 @@ class Filesystem
                 $this->chgrp(new \FilesystemIterator($file), $group, true);
             }
             if (is_link($file) && function_exists('lchgrp')) {
-                if (true !== @lchgrp($file, $group)) {
+                if (true !== @lchgrp($file, $group) || (defined('HHVM_VERSION') && !posix_getgrnam($group))) {
                     throw new IOException(sprintf('Failed to chgrp file %s', $file));
                 }
             } else {
@@ -236,9 +243,9 @@ class Filesystem
     /**
      * Renames a file or a directory.
      *
-     * @param string  $origin    The origin filename or directory
-     * @param string  $target    The new filename or directory
-     * @param Boolean $overwrite Whether to overwrite the target if it already exists
+     * @param string $origin    The origin filename or directory
+     * @param string $target    The new filename or directory
+     * @param bool   $overwrite Whether to overwrite the target if it already exists
      *
      * @throws IOException When target file or directory already exists
      * @throws IOException When origin cannot be renamed
@@ -258,15 +265,15 @@ class Filesystem
     /**
      * Creates a symbolic link or copy a directory.
      *
-     * @param string  $originDir     The origin directory path
-     * @param string  $targetDir     The symbolic link name
-     * @param Boolean $copyOnWindows Whether to copy files if on Windows
+     * @param string $originDir     The origin directory path
+     * @param string $targetDir     The symbolic link name
+     * @param bool   $copyOnWindows Whether to copy files if on Windows
      *
      * @throws IOException When symlink fails
      */
     public function symlink($originDir, $targetDir, $copyOnWindows = false)
     {
-        if (!function_exists('symlink') && $copyOnWindows) {
+        if ($copyOnWindows && !function_exists('symlink')) {
             $this->mirror($originDir, $targetDir);
 
             return;
@@ -283,21 +290,19 @@ class Filesystem
             }
         }
 
-        if (!$ok) {
-            if (true !== @symlink($originDir, $targetDir)) {
-                $report = error_get_last();
-                if (is_array($report)) {
-                    if (defined('PHP_WINDOWS_VERSION_MAJOR') && false !== strpos($report['message'], 'error code(1314)')) {
-                        throw new IOException('Unable to create symlink due to error code 1314: \'A required privilege is not held by the client\'. Do you have the required Administrator-rights?');
-                    }
+        if (!$ok && true !== @symlink($originDir, $targetDir)) {
+            $report = error_get_last();
+            if (is_array($report)) {
+                if ('\\' === DIRECTORY_SEPARATOR && false !== strpos($report['message'], 'error code(1314)')) {
+                    throw new IOException('Unable to create symlink due to error code 1314: \'A required privilege is not held by the client\'. Do you have the required Administrator-rights?');
                 }
-                throw new IOException(sprintf('Failed to create symbolic link from %s to %s', $originDir, $targetDir));
             }
+            throw new IOException(sprintf('Failed to create symbolic link from %s to %s', $originDir, $targetDir));
         }
     }
 
     /**
-     * Given an existing path, convert it to a path relative to a given starting path
+     * Given an existing path, convert it to a path relative to a given starting path.
      *
      * @param string $endPath   Absolute path of target
      * @param string $startPath Absolute path where traversal begins
@@ -306,10 +311,10 @@ class Filesystem
      */
     public function makePathRelative($endPath, $startPath)
     {
-        // Normalize separators on windows
-        if (defined('PHP_WINDOWS_VERSION_MAJOR')) {
-            $endPath = strtr($endPath, '\\', '/');
-            $startPath = strtr($startPath, '\\', '/');
+        // Normalize separators on Windows
+        if ('\\' === DIRECTORY_SEPARATOR) {
+            $endPath = str_replace('\\', '/', $endPath);
+            $startPath = str_replace('\\', '/', $startPath);
         }
 
         // Split the paths into arrays
@@ -319,21 +324,26 @@ class Filesystem
         // Find for which directory the common path stops
         $index = 0;
         while (isset($startPathArr[$index]) && isset($endPathArr[$index]) && $startPathArr[$index] === $endPathArr[$index]) {
-            $index++;
+            ++$index;
         }
 
         // Determine how deep the start path is relative to the common path (ie, "web/bundles" = 2 levels)
         $depth = count($startPathArr) - $index;
 
-        // Repeated "../" for each level need to reach the common path
-        $traverser = str_repeat('../', $depth);
+        // When we need to traverse from the start, and we are starting from a root path, don't add '../'
+        if ('/' === $startPath[0] && 0 === $index && 1 === $depth) {
+            $traverser = '';
+        } else {
+            // Repeated "../" for each level need to reach the common path
+            $traverser = str_repeat('../', $depth);
+        }
 
         $endPathRemainder = implode('/', array_slice($endPathArr, $index));
 
         // Construct $endPath from traversing to the common path, then to the remaining $endPath
-        $relativePath = $traverser.(strlen($endPathRemainder) > 0 ? $endPathRemainder.'/' : '');
+        $relativePath = $traverser.('' !== $endPathRemainder ? $endPathRemainder.'/' : '');
 
-        return (strlen($relativePath) === 0) ? './' : $relativePath;
+        return '' === $relativePath ? './' : $relativePath;
     }
 
     /**
@@ -343,10 +353,10 @@ class Filesystem
      * @param string       $targetDir The target directory
      * @param \Traversable $iterator  A Traversable instance
      * @param array        $options   An array of boolean options
-     *                               Valid options are:
-     *                                 - $options['override'] Whether to override an existing file on copy or not (see copy())
-     *                                 - $options['copy_on_windows'] Whether to copy files instead of links on Windows (see symlink())
-     *                                 - $options['delete'] Whether to delete files that are not in the source directory (defaults to false)
+     *                                Valid options are:
+     *                                - $options['override'] Whether to override an existing file on copy or not (see copy())
+     *                                - $options['copy_on_windows'] Whether to copy files instead of links on Windows (see symlink())
+     *                                - $options['delete'] Whether to delete files that are not in the source directory (defaults to false)
      *
      * @throws IOException When file type is unknown
      */
@@ -380,6 +390,10 @@ class Filesystem
             $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($originDir, $flags), \RecursiveIteratorIterator::SELF_FIRST);
         }
 
+        if ($this->exists($originDir)) {
+            $this->mkdir($targetDir);
+        }
+
         foreach ($iterator as $file) {
             $target = str_replace($originDir, $targetDir, $file->getPathname());
 
@@ -393,7 +407,7 @@ class Filesystem
                 }
             } else {
                 if (is_link($file)) {
-                    $this->symlink($file, $target);
+                    $this->symlink($file->getLinkTarget(), $target);
                 } elseif (is_dir($file)) {
                     $this->mkdir($target);
                 } elseif (is_file($file)) {
@@ -410,21 +424,17 @@ class Filesystem
      *
      * @param string $file A file path
      *
-     * @return Boolean
+     * @return bool
      */
     public function isAbsolutePath($file)
     {
-        if (strspn($file, '/\\', 0, 1)
+        return strspn($file, '/\\', 0, 1)
             || (strlen($file) > 3 && ctype_alpha($file[0])
                 && substr($file, 1, 1) === ':'
                 && (strspn($file, '/\\', 2, 1))
             )
             || null !== parse_url($file, PHP_URL_SCHEME)
-        ) {
-            return true;
-        }
-
-        return false;
+        ;
     }
 
     /**
@@ -444,10 +454,12 @@ class Filesystem
     /**
      * Atomically dumps content into a file.
      *
-     * @param  string  $filename The file to be written to.
-     * @param  string  $content  The data to write into the file.
-     * @param  integer $mode     The file mode (octal).
-     * @throws IOException       If the file cannot be written to.
+     * @param string   $filename The file to be written to.
+     * @param string   $content  The data to write into the file.
+     * @param null|int $mode     The file mode (octal). If null, file permissions are not modified
+     *                           Deprecated since version 2.3.12, to be removed in 3.0.
+     *
+     * @throws IOException If the file cannot be written to.
      */
     public function dumpFile($filename, $content, $mode = 0666)
     {
@@ -456,7 +468,7 @@ class Filesystem
         if (!is_dir($dir)) {
             $this->mkdir($dir);
         } elseif (!is_writable($dir)) {
-            throw new IOException(sprintf('Unable to write in the %s directory\n', $dir));
+            throw new IOException(sprintf('Unable to write in the %s directory.', $dir));
         }
 
         $tmpFile = tempnam($dir, basename($filename));
@@ -466,6 +478,8 @@ class Filesystem
         }
 
         $this->rename($tmpFile, $filename, true);
-        $this->chmod($filename, $mode);
+        if (null !== $mode) {
+            $this->chmod($filename, $mode);
+        }
     }
 }

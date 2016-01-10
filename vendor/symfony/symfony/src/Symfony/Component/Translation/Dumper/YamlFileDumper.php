@@ -22,15 +22,19 @@ use Symfony\Component\Yaml\Yaml;
 class YamlFileDumper extends FileDumper
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function format(MessageCatalogue $messages, $domain)
     {
-         return Yaml::dump($messages->all($domain));
+        if (!class_exists('Symfony\Component\Yaml\Yaml')) {
+            throw new \LogicException('Dumping translations in the YAML format requires the Symfony Yaml component.');
+        }
+
+        return Yaml::dump($messages->all($domain));
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function getExtension()
     {

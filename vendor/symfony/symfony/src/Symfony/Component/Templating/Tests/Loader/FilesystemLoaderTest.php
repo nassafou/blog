@@ -12,7 +12,6 @@
 namespace Symfony\Component\Templating\Tests\Loader;
 
 use Symfony\Component\Templating\Loader\FilesystemLoader;
-use Symfony\Component\Templating\Storage\FileStorage;
 use Symfony\Component\Templating\TemplateReference;
 
 class FilesystemLoaderTest extends \PHPUnit_Framework_TestCase
@@ -61,7 +60,7 @@ class FilesystemLoaderTest extends \PHPUnit_Framework_TestCase
 
         $loader = new ProjectTemplateLoader2($pathPattern);
         $loader->setDebugger($debugger = new \Symfony\Component\Templating\Tests\Fixtures\ProjectTemplateDebugger());
-        $this->assertFalse($loader->load(new TemplateReference('foo.xml', 'php')), '->load() returns false if the template does not exists for the given engine');
+        $this->assertFalse($loader->load(new TemplateReference('foo.xml', 'php')), '->load() returns false if the template does not exist for the given engine');
         $this->assertTrue($debugger->hasMessage('Failed loading template'), '->load() logs a "Failed loading template" message if the template is not found');
 
         $loader = new ProjectTemplateLoader2(array(self::$fixturesPath.'/null/%name%', $pathPattern));

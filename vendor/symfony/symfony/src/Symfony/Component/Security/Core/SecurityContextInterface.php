@@ -20,9 +20,9 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  */
 interface SecurityContextInterface
 {
-    const ACCESS_DENIED_ERROR  = '_security.403_error';
+    const ACCESS_DENIED_ERROR = '_security.403_error';
     const AUTHENTICATION_ERROR = '_security.last_error';
-    const LAST_USERNAME        = '_security.last_username';
+    const LAST_USERNAME = '_security.last_username';
 
     /**
      * Returns the current security token.
@@ -34,17 +34,17 @@ interface SecurityContextInterface
     /**
      * Sets the authentication token.
      *
-     * @param TokenInterface $token
+     * @param TokenInterface $token A TokenInterface token, or null if no further authentication information should be stored
      */
     public function setToken(TokenInterface $token = null);
 
     /**
      * Checks if the attributes are granted against the current authentication token and optionally supplied object.
      *
-     * @param array $attributes
+     * @param mixed $attributes
      * @param mixed $object
      *
-     * @return Boolean
+     * @return bool
      */
     public function isGranted($attributes, $object = null);
 }

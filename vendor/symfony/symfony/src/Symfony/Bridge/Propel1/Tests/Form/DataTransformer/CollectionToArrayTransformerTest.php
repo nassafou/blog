@@ -11,7 +11,6 @@
 
 namespace Symfony\Bridge\Propel1\Tests\Form\DataTransformer;
 
-use \PropelObjectCollection;
 use Symfony\Bridge\Propel1\Form\DataTransformer\CollectionToArrayTransformer;
 use Symfony\Bridge\Propel1\Tests\Propel1TestCase;
 
@@ -21,21 +20,15 @@ class CollectionToArrayTransformerTest extends Propel1TestCase
 
     protected function setUp()
     {
-        if (!class_exists('Symfony\Component\Form\Form')) {
-            $this->markTestSkipped('The "Form" component is not available');
-        }
-
-        parent::setUp();
-
         $this->transformer = new CollectionToArrayTransformer();
     }
 
     public function testTransform()
     {
-        $result = $this->transformer->transform(new PropelObjectCollection());
+        $result = $this->transformer->transform(new \PropelObjectCollection());
 
         $this->assertTrue(is_array($result));
-        $this->assertEquals(0, count($result));
+        $this->assertCount(0, $result);
     }
 
     public function testTransformWithNull()
@@ -43,7 +36,7 @@ class CollectionToArrayTransformerTest extends Propel1TestCase
         $result = $this->transformer->transform(null);
 
         $this->assertTrue(is_array($result));
-        $this->assertEquals(0, count($result));
+        $this->assertCount(0, $result);
     }
 
     /**
@@ -56,13 +49,13 @@ class CollectionToArrayTransformerTest extends Propel1TestCase
 
     public function testTransformWithData()
     {
-        $coll = new PropelObjectCollection();
+        $coll = new \PropelObjectCollection();
         $coll->setData(array('foo', 'bar'));
 
         $result = $this->transformer->transform($coll);
 
         $this->assertTrue(is_array($result));
-        $this->assertEquals(2, count($result));
+        $this->assertCount(2, $result);
         $this->assertEquals('foo', $result[0]);
         $this->assertEquals('bar', $result[1]);
     }
@@ -72,7 +65,7 @@ class CollectionToArrayTransformerTest extends Propel1TestCase
         $result = $this->transformer->reverseTransform(null);
 
         $this->assertInstanceOf('\PropelObjectCollection', $result);
-        $this->assertEquals(0, count($result->getData()));
+        $this->assertCount(0, $result->getData());
     }
 
     public function testReverseTransformWithEmptyString()
@@ -80,7 +73,7 @@ class CollectionToArrayTransformerTest extends Propel1TestCase
         $result = $this->transformer->reverseTransform('');
 
         $this->assertInstanceOf('\PropelObjectCollection', $result);
-        $this->assertEquals(0, count($result->getData()));
+        $this->assertCount(0, $result->getData());
     }
 
     /**
@@ -93,19 +86,21 @@ class CollectionToArrayTransformerTest extends Propel1TestCase
 
     public function testReverseTransformWithData()
     {
-        $inputData  = array('foo', 'bar');
+        $inputData = array('foo', 'bar');
 
-        $result     = $this->transformer->reverseTransform($inputData);
-        $data       = $result->getData();
+        $result = $this->transformer->reverseTransform($inputData);
+        $data = $result->getData();
 
         $this->assertInstanceOf('\PropelObjectCollection', $result);
 
         $this->assertTrue(is_array($data));
-        $this->assertEquals(2, count($data));
+        $this->assertCount(2, $data);
         $this->assertEquals('foo', $data[0]);
         $this->assertEquals('bar', $data[1]);
         $this->assertsame($inputData, $data);
     }
 }
 
-class DummyObject {}
+class DummyObject
+{
+}

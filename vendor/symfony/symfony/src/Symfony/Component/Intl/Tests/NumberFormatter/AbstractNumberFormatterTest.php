@@ -12,8 +12,6 @@
 namespace Symfony\Component\Intl\Tests\NumberFormatter;
 
 use Symfony\Component\Intl\Globals\IntlGlobals;
-use Symfony\Component\Intl\Intl;
-use Symfony\Component\Intl\Locale;
 use Symfony\Component\Intl\NumberFormatter\NumberFormatter;
 use Symfony\Component\Intl\Util\IntlTestHelper;
 
@@ -49,7 +47,7 @@ abstract class AbstractNumberFormatterTest extends \PHPUnit_Framework_TestCase
             array(1000.12, 'BRL', '1,000.12'),
             array(1000.12, 'CRC', '1,000.12'),
             array(1000.12, 'JPY', '1,000.12'),
-            array(1000.12, 'CHF', '1,000.12')
+            array(1000.12, 'CHF', '1,000.12'),
         );
     }
 
@@ -120,7 +118,7 @@ abstract class AbstractNumberFormatterTest extends \PHPUnit_Framework_TestCase
             array(1000.127, 'BRL', 'R', '%s$1,000.13'),
             array(1000.129, 'BRL', 'R', '%s$1,000.13'),
             array(11.50999, 'BRL', 'R', '%s$11.51'),
-            array(11.9999464, 'BRL', 'R', '%s$12.00')
+            array(11.9999464, 'BRL', 'R', '%s$12.00'),
         );
     }
 
@@ -138,20 +136,20 @@ abstract class AbstractNumberFormatterTest extends \PHPUnit_Framework_TestCase
         return array(
             array(100, 'CHF', 'CHF', '%s100.00'),
             array(-100, 'CHF', 'CHF', '(%s100.00)'),
-            array(1000.12, 'CHF', 'CHF', '%s1,000.10'),
-            array('1000.12', 'CHF', 'CHF', '%s1,000.10'),
+            array(1000.12, 'CHF', 'CHF', '%s1,000.12'),
+            array('1000.12', 'CHF', 'CHF', '%s1,000.12'),
 
             // Rounding checks
-            array(1000.121, 'CHF', 'CHF', '%s1,000.10'),
-            array(1000.123, 'CHF', 'CHF', '%s1,000.10'),
-            array(1000.125, 'CHF', 'CHF', '%s1,000.10'),
-            array(1000.127, 'CHF', 'CHF', '%s1,000.15'),
-            array(1000.129, 'CHF', 'CHF', '%s1,000.15'),
+            array(1000.121, 'CHF', 'CHF', '%s1,000.12'),
+            array(1000.123, 'CHF', 'CHF', '%s1,000.12'),
+            array(1000.125, 'CHF', 'CHF', '%s1,000.12'),
+            array(1000.127, 'CHF', 'CHF', '%s1,000.13'),
+            array(1000.129, 'CHF', 'CHF', '%s1,000.13'),
 
             array(1200000.00, 'CHF', 'CHF', '%s1,200,000.00'),
             array(1200000.1, 'CHF', 'CHF', '%s1,200,000.10'),
             array(1200000.10, 'CHF', 'CHF', '%s1,200,000.10'),
-            array(1200000.101, 'CHF', 'CHF', '%s1,200,000.10')
+            array(1200000.101, 'CHF', 'CHF', '%s1,200,000.10'),
         );
     }
 
@@ -219,12 +217,13 @@ abstract class AbstractNumberFormatterTest extends \PHPUnit_Framework_TestCase
             array($formatter, 1, '¤1.00'),
             array($formatter, 1.1, '¤1.00'),
             array($formatter, 2147483648, '(¤2,147,483,648.00)', $message),
-            array($formatter, -2147483649, '¤2,147,483,647.00', $message)
+            array($formatter, -2147483649, '¤2,147,483,647.00', $message),
         );
     }
 
     /**
      * The parse() method works differently with integer out of the 32 bit range. format() works fine.
+     *
      * @dataProvider formatTypeInt64Provider
      */
     public function testFormatTypeInt64($formatter, $value, $expected)
@@ -262,7 +261,7 @@ abstract class AbstractNumberFormatterTest extends \PHPUnit_Framework_TestCase
             array($formatter, 1, '¤1.00'),
             array($formatter, 1.1, '¤1.00'),
             array($formatter, 2147483648, '¤2,147,483,648.00'),
-            array($formatter, -2147483649, '(¤2,147,483,649.00)')
+            array($formatter, -2147483649, '(¤2,147,483,649.00)'),
         );
     }
 
@@ -339,6 +338,7 @@ abstract class AbstractNumberFormatterTest extends \PHPUnit_Framework_TestCase
     {
         $formatter = $this->getNumberFormatter('en', NumberFormatter::DECIMAL);
 
+        $attributeRet = null;
         if (null !== $fractionDigits) {
             $attributeRet = $formatter->setAttribute(NumberFormatter::FRACTION_DIGITS, $fractionDigits);
         }
@@ -347,7 +347,7 @@ abstract class AbstractNumberFormatterTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expected, $formattedValue);
         $this->assertSame($expectedFractionDigits, $formatter->getAttribute(NumberFormatter::FRACTION_DIGITS));
 
-        if (isset($attributeRet)) {
+        if (null !== $attributeRet) {
             $this->assertTrue($attributeRet);
         }
     }
@@ -360,7 +360,7 @@ abstract class AbstractNumberFormatterTest extends \PHPUnit_Framework_TestCase
             array(1.123, '1.1', 1, 1),
             array(1.123, '1.12', 2, 2),
             array(1.123, '1', -1, 0),
-            array(1.123, '1', 'abc', 0)
+            array(1.123, '1', 'abc', 0),
         );
     }
 
@@ -371,6 +371,7 @@ abstract class AbstractNumberFormatterTest extends \PHPUnit_Framework_TestCase
     {
         $formatter = $this->getNumberFormatter('en', NumberFormatter::DECIMAL);
 
+        $attributeRet = null;
         if (null !== $groupingUsed) {
             $attributeRet = $formatter->setAttribute(NumberFormatter::GROUPING_USED, $groupingUsed);
         }
@@ -379,7 +380,7 @@ abstract class AbstractNumberFormatterTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expected, $formattedValue);
         $this->assertSame($expectedGroupingUsed, $formatter->getAttribute(NumberFormatter::GROUPING_USED));
 
-        if (isset($attributeRet)) {
+        if (null !== $attributeRet) {
             $this->assertTrue($attributeRet);
         }
     }
@@ -472,14 +473,47 @@ abstract class AbstractNumberFormatterTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('en', $formatter->getLocale());
     }
 
+    public function testGetSymbol()
+    {
+        $decimalFormatter = $this->getNumberFormatter('en', NumberFormatter::DECIMAL);
+        $currencyFormatter = $this->getNumberFormatter('en', NumberFormatter::CURRENCY);
+
+        $r = new \ReflectionProperty('Symfony\Component\Intl\NumberFormatter\NumberFormatter', 'enSymbols');
+        $r->setAccessible(true);
+        $expected = $r->getValue('Symfony\Component\Intl\NumberFormatter\NumberFormatter');
+
+        for ($i = 0; $i <= 17; ++$i) {
+            $this->assertSame($expected[1][$i], $decimalFormatter->getSymbol($i));
+            $this->assertSame($expected[2][$i], $currencyFormatter->getSymbol($i));
+        }
+    }
+
+    public function testGetTextAttribute()
+    {
+        $decimalFormatter = $this->getNumberFormatter('en', NumberFormatter::DECIMAL);
+        $currencyFormatter = $this->getNumberFormatter('en', NumberFormatter::CURRENCY);
+
+        $r = new \ReflectionProperty('Symfony\Component\Intl\NumberFormatter\NumberFormatter', 'enTextAttributes');
+        $r->setAccessible(true);
+        $expected = $r->getValue('Symfony\Component\Intl\NumberFormatter\NumberFormatter');
+
+        for ($i = 0; $i <= 5; ++$i) {
+            $this->assertSame($expected[1][$i], $decimalFormatter->getTextAttribute($i));
+            $this->assertSame($expected[2][$i], $currencyFormatter->getTextAttribute($i));
+        }
+    }
+
     /**
      * @dataProvider parseProvider
      */
-    public function testParse($value, $expected, $message = '')
+    public function testParse($value, $expected, $message, $expectedPosition, $groupingUsed = true)
     {
+        $position = 0;
         $formatter = $this->getNumberFormatter('en', NumberFormatter::DECIMAL);
-        $parsedValue = $formatter->parse($value, NumberFormatter::TYPE_DOUBLE);
+        $formatter->setAttribute(NumberFormatter::GROUPING_USED, $groupingUsed);
+        $parsedValue = $formatter->parse($value, NumberFormatter::TYPE_DOUBLE, $position);
         $this->assertSame($expected, $parsedValue, $message);
+        $this->assertSame($expectedPosition, $position, $message);
 
         if ($expected === false) {
             $errorCode = IntlGlobals::U_PARSE_ERROR;
@@ -500,8 +534,13 @@ abstract class AbstractNumberFormatterTest extends \PHPUnit_Framework_TestCase
     public function parseProvider()
     {
         return array(
-            array('prefix1', false, '->parse() does not parse a number with a string prefix.'),
-            array('1suffix', (float) 1, '->parse() parses a number with a string suffix.'),
+            array('prefix1', false, '->parse() does not parse a number with a string prefix.', 0),
+            array('1.4suffix', (float) 1.4, '->parse() parses a number with a string suffix.', 3),
+            array('-.4suffix', (float) -0.4, '->parse() parses a negative dot float with suffix.', 3),
+            array('-123,4', false, '->parse() does not parse when invalid grouping used.', 6),
+            array('-1234,567', false, '->parse() does not parse when invalid grouping used.', 5),
+            array('-123,,456', false, '->parse() does not parse when invalid grouping used.', 4),
+            array('-123,,456', -123.0, '->parse() parses when grouping is disabled.', 4, false),
         );
     }
 
@@ -529,10 +568,11 @@ abstract class AbstractNumberFormatterTest extends \PHPUnit_Framework_TestCase
         return array(
             array('1', 1),
             array('1.1', 1),
+            array('.1', 0),
             array('2,147,483,647', 2147483647),
             array('-2,147,483,648', -2147483647 - 1),
             array('2,147,483,648', false, '->parse() TYPE_INT32 returns false when the number is greater than the integer positive range.'),
-            array('-2,147,483,649', false, '->parse() TYPE_INT32 returns false when the number is greater than the integer negative range.')
+            array('-2,147,483,649', false, '->parse() TYPE_INT32 returns false when the number is greater than the integer negative range.'),
         );
     }
 
@@ -550,10 +590,7 @@ abstract class AbstractNumberFormatterTest extends \PHPUnit_Framework_TestCase
 
         // Bug #59597 was fixed on PHP 5.3.14 and 5.4.4
         // The negative PHP_INT_MAX was being converted to float
-        if (
-            (version_compare(PHP_VERSION, '5.4.0', '<') && version_compare(PHP_VERSION, '5.3.14', '>=')) ||
-            version_compare(PHP_VERSION, '5.4.4', '>=')
-        ) {
+        if ((PHP_VERSION_ID < 50400 && PHP_VERSION_ID >= 50314) || PHP_VERSION_ID >= 50404 || (extension_loaded('intl') && method_exists('IntlDateFormatter', 'setTimeZone'))) {
             $this->assertInternalType('int', $parsedValue);
         } else {
             $this->assertInternalType('float', $parsedValue);
@@ -610,10 +647,7 @@ abstract class AbstractNumberFormatterTest extends \PHPUnit_Framework_TestCase
 
         // Bug #59597 was fixed on PHP 5.3.14 and 5.4.4
         // A 32 bit integer was being generated instead of a 64 bit integer
-        if (
-            (version_compare(PHP_VERSION, '5.3.14', '<')) ||
-            (version_compare(PHP_VERSION, '5.4.0', '>=') && version_compare(PHP_VERSION, '5.4.4', '<'))
-        ) {
+        if (PHP_VERSION_ID < 50314 || (PHP_VERSION_ID >= 50400 && PHP_VERSION_ID < 50404)) {
             $this->assertEquals(-2147483648, $parsedValue, '->parse() TYPE_INT64 does not use true 64 bit integers, using only the 32 bit range (PHP < 5.3.14 and PHP < 5.4.4).');
         } else {
             $this->assertEquals(2147483648, $parsedValue, '->parse() TYPE_INT64 uses true 64 bit integers (PHP >= 5.3.14 and PHP >= 5.4.4).');
@@ -624,10 +658,7 @@ abstract class AbstractNumberFormatterTest extends \PHPUnit_Framework_TestCase
 
         // Bug #59597 was fixed on PHP 5.3.14 and 5.4.4
         // A 32 bit integer was being generated instead of a 64 bit integer
-        if (
-            (version_compare(PHP_VERSION, '5.3.14', '<')) ||
-            (version_compare(PHP_VERSION, '5.4.0', '>=') && version_compare(PHP_VERSION, '5.4.4', '<'))
-        ) {
+        if (PHP_VERSION_ID < 50314 || (PHP_VERSION_ID >= 50400 && PHP_VERSION_ID < 50404)) {
             $this->assertEquals(2147483647, $parsedValue, '->parse() TYPE_INT64 does not use true 64 bit integers, using only the 32 bit range  (PHP < 5.3.14 and PHP < 5.4.4).');
         } else {
             $this->assertEquals(-2147483649, $parsedValue, '->parse() TYPE_INT64 uses true 64 bit integers (PHP >= 5.3.14 and PHP >= 5.4.4).');
@@ -641,7 +672,7 @@ abstract class AbstractNumberFormatterTest extends \PHPUnit_Framework_TestCase
     {
         $formatter = $this->getNumberFormatter('en', NumberFormatter::DECIMAL);
         $parsedValue = $formatter->parse($value, NumberFormatter::TYPE_DOUBLE);
-        $this->assertSame($expectedValue, $parsedValue);
+        $this->assertEquals($expectedValue, $parsedValue, '', 0.001);
     }
 
     public function parseTypeDoubleProvider()
@@ -663,14 +694,6 @@ abstract class AbstractNumberFormatterTest extends \PHPUnit_Framework_TestCase
         $formatter->parse('1', NumberFormatter::TYPE_CURRENCY);
     }
 
-    public function testParseWithNullPositionValue()
-    {
-        $position = null;
-        $formatter = $this->getNumberFormatter('en', NumberFormatter::DECIMAL);
-        $formatter->parse('123', NumberFormatter::TYPE_INT32, $position);
-        $this->assertNull($position);
-    }
-
     public function testParseWithNotNullPositionValue()
     {
         $position = 1;
@@ -681,8 +704,8 @@ abstract class AbstractNumberFormatterTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $locale
-     * @param null $style
-     * @param null $pattern
+     * @param null   $style
+     * @param null   $pattern
      *
      * @return \NumberFormatter
      */
@@ -694,14 +717,14 @@ abstract class AbstractNumberFormatterTest extends \PHPUnit_Framework_TestCase
     abstract protected function getIntlErrorMessage();
 
     /**
-     * @return integer
+     * @return int
      */
     abstract protected function getIntlErrorCode();
 
     /**
-     * @param integer $errorCode
+     * @param int $errorCode
      *
-     * @return Boolean
+     * @return bool
      */
     abstract protected function isIntlFailure($errorCode);
 }

@@ -29,14 +29,14 @@ namespace Symfony\Component\Form\Extension\Core\ChoiceList;
 interface ChoiceListInterface
 {
     /**
-     * Returns the list of choices
+     * Returns the list of choices.
      *
      * @return array The choices with their indices as keys
      */
     public function getChoices();
 
     /**
-     * Returns the values for the choices
+     * Returns the values for the choices.
      *
      * @return array The values with the corresponding choice indices as keys
      */
@@ -88,7 +88,7 @@ interface ChoiceListInterface
      *               choice indices as keys on the lowest levels and the choice
      *               group names in the keys of the higher levels
      *
-     * @see getPreferredValues
+     * @see getPreferredValues()
      */
     public function getRemainingViews();
 
@@ -96,6 +96,9 @@ interface ChoiceListInterface
      * Returns the choices corresponding to the given values.
      *
      * The choices can have any data type.
+     *
+     * The choices must be returned with the same keys and in the same order
+     * as the corresponding values in the given array.
      *
      * @param array $values An array of choice values. Not existing values in
      *                      this array are ignored
@@ -109,6 +112,9 @@ interface ChoiceListInterface
      *
      * The values must be strings.
      *
+     * The values must be returned with the same keys and in the same order
+     * as the corresponding choices in the given array.
+     *
      * @param array $choices An array of choices. Not existing choices in this
      *                       array are ignored
      *
@@ -121,9 +127,12 @@ interface ChoiceListInterface
      * Returns the indices corresponding to the given choices.
      *
      * The indices must be positive integers or strings accepted by
-     * {@link FormConfigBuilder::validateName()}.
+     * {@link \Symfony\Component\Form\FormConfigBuilder::validateName()}.
      *
      * The index "placeholder" is internally reserved.
+     *
+     * The indices must be returned with the same keys and in the same order
+     * as the corresponding choices in the given array.
      *
      * @param array $choices An array of choices. Not existing choices in this
      *                       array are ignored
@@ -136,9 +145,12 @@ interface ChoiceListInterface
      * Returns the indices corresponding to the given values.
      *
      * The indices must be positive integers or strings accepted by
-     * {@link FormConfigBuilder::validateName()}.
+     * {@link \Symfony\Component\Form\FormConfigBuilder::validateName()}.
      *
      * The index "placeholder" is internally reserved.
+     *
+     * The indices must be returned with the same keys and in the same order
+     * as the corresponding values in the given array.
      *
      * @param array $values An array of choice values. Not existing values in
      *                      this array are ignored

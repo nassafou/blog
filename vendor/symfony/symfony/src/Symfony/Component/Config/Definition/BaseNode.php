@@ -14,9 +14,10 @@ namespace Symfony\Component\Config\Definition;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Config\Definition\Exception\ForbiddenOverwriteException;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use Symfony\Component\Config\Definition\Exception\InvalidTypeException;
 
 /**
- * The base node class
+ * The base node class.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
@@ -138,21 +139,21 @@ abstract class BaseNode implements NodeInterface
     /**
      * Set this node as required.
      *
-     * @param Boolean $boolean Required node
+     * @param bool $boolean Required node
      */
     public function setRequired($boolean)
     {
-        $this->required = (Boolean) $boolean;
+        $this->required = (bool) $boolean;
     }
 
     /**
      * Sets if this node can be overridden.
      *
-     * @param Boolean $allow
+     * @param bool $allow
      */
     public function setAllowOverwrite($allow)
     {
-        $this->allowOverwrite = (Boolean) $allow;
+        $this->allowOverwrite = (bool) $allow;
     }
 
     /**
@@ -178,7 +179,7 @@ abstract class BaseNode implements NodeInterface
     /**
      * Checks if this node is required.
      *
-     * @return Boolean
+     * @return bool
      */
     public function isRequired()
     {
@@ -186,7 +187,7 @@ abstract class BaseNode implements NodeInterface
     }
 
     /**
-     * Returns the name of this node
+     * Returns the name of this node.
      *
      * @return string The Node's name.
      */
@@ -287,6 +288,7 @@ abstract class BaseNode implements NodeInterface
      *
      * @return mixed The finalized value
      *
+     * @throws Exception
      * @throws InvalidConfigurationException
      */
     final public function finalize($value)
@@ -300,14 +302,10 @@ abstract class BaseNode implements NodeInterface
         foreach ($this->finalValidationClosures as $closure) {
             try {
                 $value = $closure($value);
-            } catch (Exception $correctEx) {
-                throw $correctEx;
-            } catch (\Exception $invalid) {
-                throw new InvalidConfigurationException(sprintf(
-                    'Invalid configuration for path "%s": %s',
-                    $this->getPath(),
-                    $invalid->getMessage()
-                ), $invalid->getCode(), $invalid);
+            } catch (Exception $e) {
+                throw $e;
+            } catch (\Exception $e) {
+                throw new InvalidConfigurationException(sprintf('Invalid configuration for path "%s": %s', $this->getPath(), $e->getMessage()), $e->getCode(), $e);
             }
         }
 

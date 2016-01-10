@@ -34,7 +34,7 @@ class ConstraintViolation implements ConstraintViolationInterface
     private $messageParameters;
 
     /**
-     * @var integer|null
+     * @var int|null
      */
     private $messagePluralization;
 
@@ -61,20 +61,20 @@ class ConstraintViolation implements ConstraintViolationInterface
     /**
      * Creates a new constraint violation.
      *
-     * @param string       $message               The violation message.
-     * @param string       $messageTemplate       The raw violation message.
-     * @param array        $messageParameters     The parameters to substitute
-     *                                            in the raw message.
-     * @param mixed        $root                  The value originally passed
-     *                                            to the validator.
-     * @param string       $propertyPath          The property path from the
-     *                                            root value to the invalid
-     *                                            value.
-     * @param mixed        $invalidValue          The invalid value causing the
-     *                                            violation.
-     * @param integer|null $messagePluralization  The pluralization parameter.
-     * @param mixed        $code                  The error code of the
-     *                                            violation, if any.
+     * @param string   $message              The violation message.
+     * @param string   $messageTemplate      The raw violation message.
+     * @param array    $messageParameters    The parameters to substitute
+     *                                       in the raw message.
+     * @param mixed    $root                 The value originally passed
+     *                                       to the validator.
+     * @param string   $propertyPath         The property path from the
+     *                                       root value to the invalid
+     *                                       value.
+     * @param mixed    $invalidValue         The invalid value causing the
+     *                                       violation.
+     * @param int|null $messagePluralization The pluralization parameter.
+     * @param mixed    $code                 The error code of the
+     *                                       violation, if any.
      */
     public function __construct($message, $messageTemplate, array $messageParameters, $root, $propertyPath, $invalidValue, $messagePluralization = null, $code = null)
     {
@@ -95,7 +95,14 @@ class ConstraintViolation implements ConstraintViolationInterface
      */
     public function __toString()
     {
-        $class = (string) (is_object($this->root) ? get_class($this->root) : $this->root);
+        if (is_object($this->root)) {
+            $class = 'Object('.get_class($this->root).')';
+        } elseif (is_array($this->root)) {
+            $class = 'Array';
+        } else {
+            $class = (string) $this->root;
+        }
+
         $propertyPath = (string) $this->propertyPath;
         $code = $this->code;
 
@@ -111,7 +118,7 @@ class ConstraintViolation implements ConstraintViolationInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getMessageTemplate()
     {
@@ -119,7 +126,7 @@ class ConstraintViolation implements ConstraintViolationInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getMessageParameters()
     {
@@ -127,7 +134,7 @@ class ConstraintViolation implements ConstraintViolationInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getMessagePluralization()
     {
@@ -135,7 +142,7 @@ class ConstraintViolation implements ConstraintViolationInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getMessage()
     {
@@ -143,7 +150,7 @@ class ConstraintViolation implements ConstraintViolationInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getRoot()
     {
@@ -151,7 +158,7 @@ class ConstraintViolation implements ConstraintViolationInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getPropertyPath()
     {
@@ -159,7 +166,7 @@ class ConstraintViolation implements ConstraintViolationInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getInvalidValue()
     {
@@ -167,7 +174,7 @@ class ConstraintViolation implements ConstraintViolationInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getCode()
     {

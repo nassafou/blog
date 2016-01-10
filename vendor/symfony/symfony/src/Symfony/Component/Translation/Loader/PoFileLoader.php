@@ -19,7 +19,7 @@ use Symfony\Component\Config\Resource\FileResource;
  * @copyright Copyright (c) 2010, Union of RAD http://union-of-rad.org (http://lithify.me/)
  * @copyright Copyright (c) 2012, Clemens Tolboom
  */
-class PoFileLoader extends ArrayLoader implements LoaderInterface
+class PoFileLoader extends ArrayLoader
 {
     public function load($resource, $locale, $domain = 'messages')
     {
@@ -44,7 +44,10 @@ class PoFileLoader extends ArrayLoader implements LoaderInterface
         }
 
         $catalogue = parent::load($messages, $locale, $domain);
-        $catalogue->addResource(new FileResource($resource));
+
+        if (class_exists('Symfony\Component\Config\Resource\FileResource')) {
+            $catalogue->addResource(new FileResource($resource));
+        }
 
         return $catalogue;
     }
@@ -134,9 +137,8 @@ class PoFileLoader extends ArrayLoader implements LoaderInterface
                 $item['ids']['plural'] = substr($line, 14, -1);
             } elseif (substr($line, 0, 7) === 'msgstr[') {
                 $size = strpos($line, ']');
-                $item['translated'][(integer) substr($line, 7, 1)] = substr($line, $size + 3, -1);
+                $item['translated'][(int) substr($line, 7, 1)] = substr($line, $size + 3, -1);
             }
-
         }
         // save last item
         $this->addMessage($messages, $item);
@@ -146,7 +148,7 @@ class PoFileLoader extends ArrayLoader implements LoaderInterface
     }
 
     /**
-     * Save a translation item to the messeages.
+     * Save a translation item to the messages.
      *
      * A .po file could contain by error missing plural indexes. We need to
      * fix these before saving them.
@@ -157,7 +159,7 @@ class PoFileLoader extends ArrayLoader implements LoaderInterface
     private function addMessage(array &$messages, array $item)
     {
         if (is_array($item['translated'])) {
-            $messages[$item['ids']['singular']] = stripslashes($item['translated'][0]);
+            $messages[stripcslashes($item['ids']['singular'])] = stripcslashes($item['translated'][0]);
             if (isset($item['ids']['plural'])) {
                 $plurals = $item['translated'];
                 // PO are by definition indexed so sort by index.
@@ -166,13 +168,13 @@ class PoFileLoader extends ArrayLoader implements LoaderInterface
                 end($plurals);
                 $count = key($plurals);
                 // Fill missing spots with '-'.
-                $empties = array_fill(0, $count+1, '-');
+                $empties = array_fill(0, $count + 1, '-');
                 $plurals += $empties;
                 ksort($plurals);
-                $messages[$item['ids']['plural']] = stripcslashes(implode('|', $plurals));
+                $messages[stripcslashes($item['ids']['plural'])] = stripcslashes(implode('|', $plurals));
             }
         } elseif (!empty($item['ids']['singular'])) {
-              $messages[$item['ids']['singular']] = stripslashes($item['translated']);
+            $messages[stripcslashes($item['ids']['singular'])] = stripcslashes($item['translated']);
         }
     }
 }

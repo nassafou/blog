@@ -11,10 +11,12 @@
 
 namespace Symfony\Component\Form\Tests\Extension\Core\Type;
 
+use Symfony\Component\Form\Test\TypeTestCase as TestCase;
+
 /**
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class SubmitTypeTest extends TypeTestCase
+class SubmitTypeTest extends TestCase
 {
     public function testCreateSubmitButtonInstances()
     {
@@ -50,5 +52,14 @@ class SubmitTypeTest extends TypeTestCase
         $button->submit('foo');
 
         $this->assertTrue($button->isClicked());
+    }
+
+    public function testSubmitCanBeAddedToForm()
+    {
+        $form = $this->factory
+            ->createBuilder('form')
+            ->getForm();
+
+        $this->assertSame($form, $form->add('send', 'submit'));
     }
 }

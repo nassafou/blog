@@ -49,7 +49,7 @@ class Translator extends BaseTranslator
 
         $this->options = array(
             'cache_dir' => null,
-            'debug'     => false,
+            'debug' => false,
         );
 
         // check option names
@@ -68,7 +68,11 @@ class Translator extends BaseTranslator
     public function getLocale()
     {
         if (null === $this->locale && $this->container->isScopeActive('request') && $this->container->has('request')) {
-            $this->locale = $this->container->get('request')->getLocale();
+            try {
+                $this->setLocale($this->container->get('request')->getLocale());
+            } catch (\InvalidArgumentException $e) {
+                $this->setLocale($this->container->get('request')->getDefaultLocale());
+            }
         }
 
         return $this->locale;
@@ -89,7 +93,9 @@ class Translator extends BaseTranslator
             return parent::loadCatalogue($locale);
         }
 
-        $cache = new ConfigCache($this->options['cache_dir'].'/catalogue.'.$locale.'.php', $this->options['debug']);
+        $this->assertValidLocale($locale);
+
+        $cache = new ConfigCache($this->getCatalogueCachePath($locale), $this->options['debug']);
         if (!$cache->isFresh()) {
             $this->initialize();
 
@@ -97,8 +103,10 @@ class Translator extends BaseTranslator
 
             $fallbackContent = '';
             $current = '';
+            $replacementPattern = '/[^a-z0-9_]/i';
             foreach ($this->computeFallbackLocales($locale) as $fallback) {
-                $fallbackSuffix = ucfirst(str_replace('-', '_', $fallback));
+                $fallbackSuffix = ucfirst(preg_replace($replacementPattern, '_', $fallback));
+                $currentSuffix = ucfirst(preg_replace($replacementPattern, '_', $current));
 
                 $fallbackContent .= sprintf(<<<EOF
 \$catalogue%s = new MessageCatalogue('%s', %s);
@@ -110,7 +118,7 @@ EOF
                     $fallbackSuffix,
                     $fallback,
                     var_export($this->catalogues[$fallback]->all(), true),
-                    ucfirst(str_replace('-', '_', $current)),
+                    $currentSuffix,
                     $fallbackSuffix
                 );
                 $current = $fallback;
@@ -148,5 +156,10 @@ EOF
                 $this->addLoader($alias, $this->container->get($id));
             }
         }
+    }
+
+    private function getCatalogueCachePath($locale)
+    {
+        return $this->options['cache_dir'].'/catalogue.'.$locale.'.'.sha1(serialize($this->getFallbackLocales())).'.php';
     }
 }

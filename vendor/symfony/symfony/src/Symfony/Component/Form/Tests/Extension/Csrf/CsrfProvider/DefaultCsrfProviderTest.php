@@ -15,6 +15,7 @@ use Symfony\Component\Form\Extension\Csrf\CsrfProvider\DefaultCsrfProvider;
 
 /**
  * @runTestsInSeparateProcesses
+ * @preserveGlobalState disabled
  */
 class DefaultCsrfProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -45,13 +46,12 @@ class DefaultCsrfProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(sha1('SECRET'.'foo'.session_id()), $token);
     }
 
+    /**
+     * @requires PHP 5.4
+     */
     public function testGenerateCsrfTokenOnUnstartedSession()
     {
         session_id('touti');
-
-        if (!version_compare(PHP_VERSION, '5.4', '>=')) {
-            $this->markTestSkipped('This test requires PHP >= 5.4');
-        }
 
         $this->assertSame(PHP_SESSION_NONE, session_status());
 

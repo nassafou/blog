@@ -16,10 +16,9 @@ use Symfony\Component\Validator\Exception\MissingOptionsException;
 
 /**
  * @Annotation
+ * @Target({"PROPERTY", "METHOD", "ANNOTATION"})
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
- *
- * @api
  */
 class Count extends Constraint
 {

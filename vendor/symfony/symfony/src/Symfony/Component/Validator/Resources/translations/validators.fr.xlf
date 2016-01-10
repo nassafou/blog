@@ -35,12 +35,12 @@
                 <target>Une ou plusieurs des valeurs soumises sont invalides.</target>
             </trans-unit>
             <trans-unit id="9">
-                <source>The fields {{ fields }} were not expected.</source>
-                <target>Les champs {{ fields }} n'ont pas été prévus.</target>
+                <source>This field was not expected.</source>
+                <target>Ce champ n'a pas été prévu.</target>
             </trans-unit>
             <trans-unit id="10">
-                <source>The fields {{ fields }} are missing.</source>
-                <target>Les champs {{ fields }} sont manquants.</target>
+                <source>This field is missing.</source>
+                <target>Ce champ est manquant.</target>
             </trans-unit>
             <trans-unit id="11">
                 <source>This value is not a valid date.</source>
@@ -277,6 +277,10 @@
             <trans-unit id="72">
                 <source>This value should not be identical to {{ compared_value_type }} {{ compared_value }}.</source>
                 <target>Cette valeur ne doit pas être identique à {{ compared_value_type }} {{ compared_value }}.</target>
+            </trans-unit>
+            <trans-unit id="80">
+                <source>This value does not match the expected {{ charset }} charset.</source>
+                <target>Cette valeur ne correspond pas au jeu de caractères {{ charset }} attendu.</target>
             </trans-unit>
         </body>
     </file>

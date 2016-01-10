@@ -28,6 +28,7 @@ class CollectionType extends AbstractType
     {
         if ($options['allow_add'] && $options['prototype']) {
             $prototype = $builder->create($options['prototype_name'], $options['type'], array_replace(array(
+                'required' => $options['required'],
                 'label' => $options['prototype_name'].'label__',
             ), $options['options']));
             $builder->setAttribute('prototype', $prototype->getForm());
@@ -49,7 +50,7 @@ class CollectionType extends AbstractType
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars = array_replace($view->vars, array(
-            'allow_add'    => $options['allow_add'],
+            'allow_add' => $options['allow_add'],
             'allow_delete' => $options['allow_delete'],
         ));
 
@@ -80,12 +81,12 @@ class CollectionType extends AbstractType
         };
 
         $resolver->setDefaults(array(
-            'allow_add'      => false,
-            'allow_delete'   => false,
-            'prototype'      => true,
+            'allow_add' => false,
+            'allow_delete' => false,
+            'prototype' => true,
             'prototype_name' => '__name__',
-            'type'           => 'text',
-            'options'        => array(),
+            'type' => 'text',
+            'options' => array(),
         ));
 
         $resolver->setNormalizers(array(

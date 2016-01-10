@@ -13,8 +13,7 @@ namespace Symfony\Component\Validator\Constraints;
 
 /**
  * @Annotation
- *
- * @api
+ * @Target({"PROPERTY", "METHOD", "ANNOTATION"})
  */
 class Image extends File
 {

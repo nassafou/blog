@@ -34,7 +34,7 @@ class MessageDataCollector extends DataCollector
      * to avoid the creation of these objects when no emails are sent.
      *
      * @param ContainerInterface $container A ContainerInterface instance
-     * @param Boolean            $isSpool
+     * @param bool               $isSpool
      */
     public function __construct(ContainerInterface $container, $isSpool)
     {
@@ -50,10 +50,10 @@ class MessageDataCollector extends DataCollector
         // only collect when Swiftmailer has already been initialized
         if (class_exists('Swift_Mailer', false)) {
             $logger = $this->container->get('swiftmailer.plugin.messagelogger');
-            $this->data['messages']     = $logger->getMessages();
+            $this->data['messages'] = $logger->getMessages();
             $this->data['messageCount'] = $logger->countMessages();
         } else {
-            $this->data['messages']     = array();
+            $this->data['messages'] = array();
             $this->data['messageCount'] = 0;
         }
 

@@ -18,7 +18,7 @@
 {% block toolbar %}
     {% set duration = collector.events|length ? '%.0f ms'|format(collector.duration) : 'n/a' %}
     {% set icon %}
-        <img width="16" height="28" alt="Time" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAcCAYAAABoMT8aAAABqUlEQVR42t2Vv0sCYRyHX9OmEhsMx/YKGlwLQ69DTEUSBJEQEy5J3FRc/BsuiFqEIIcQIRo6ysUhoaBBWhoaGoJwiMJLglRKrs8bXgienmkQdPDAwX2f57j3fhFJkkbiPwTK5bIiFoul3kmPud8MqKMewDXpwuGww+12n9hsNhFnlijYf/Z4PDmO45Yxo+10ZFGTyWRMEItU6AdCx7lczkgd6n7J2Wx2xm63P6jJMk6n80YQBBN1aUDv9XqvlAbbm2LE7/cLODRB0un0VveAeoDC8/waCQQC18MGQqHQOcEKvw8bcLlcL6TfYnVtCrGRAlartUUYhmn1jKg/E3USjUYfhw3E4/F7ks/nz4YNFIvFQ/ogbUYikdefyqlU6gnuOg2YK5XKvs/n+xhUDgaDTVEUt+HO04ABOBA5isViDTU5kUi81Wq1AzhWMEkDGmAEq2C3UCjcYXGauDvfEsuyUjKZbJRKpVvM8IABU9SVX+cxYABmwIE9cFqtVi9xtgvsC2AHbIAFoKey0gdlHEyDObAEWLACFsEsMALdIJ80+dK0bTS95v7+v/AJnis0eO906QwAAAAASUVORK5CYII=">
+        <img width="16" height="28" alt="Time" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAcCAYAAABoMT8aAAABqUlEQVR42t2Vv0sCYRyHX9OmEhsMx/YKGlwLQ69DTEUSBJEQEy5J3FRc/BsuiFqEIIcQIRo6ysUhoaBBWhoaGoJwiMJLglRKrs8bXgienmkQdPDAwX2f57j3fhFJkkbiPwTK5bIiFoul3kmPud8MqKMewDXpwuGww+12n9hsNhFnlijYf/Z4PDmO45Yxo+10ZFGTyWRMEItU6AdCx7lczkgd6n7J2Wx2xm63P6jJMk6n80YQBBN1aUDv9XqvlAbbm2LE7/cLODRB0un0VveAeoDC8/waCQQC18MGQqHQOcEKvw8bcLlcL6TfYnVtCrGRAlartUUYhmn1jKg/E3USjUYfhw3E4/F7ks/nz4YNFIvFQ/ogbUYikdefyqlU6gnuOg2YK5XKvs/n+xhUDgaDTVEUt+HO04ABOBA5isViDTU5kUi81Wq1AzhWMEkDGmAEq2C3UCjcYXGauDvfEsuyUjKZbJRKpVvM8IABU9SVX+cxYABmwIE9cFqtVi9xtgvsC2AHbIAFoKey0gdlHEyDObAEWLACFsEsMALdIJ80+dK0bTS95v7+v/AJnis0eO906QwAAAAASUVORK5CYII=" />
         <span>{{ duration }}</span>
     {% endset %}
     {% set text %}
@@ -91,7 +91,7 @@
         {% endfor %}
     {% endif %}
 
-    <script>//<![CDATA[
+    <script>{% autoescape 'js' %}//<![CDATA[
         /**
          * In-memory key-value cache manager
          */
@@ -103,19 +103,19 @@
                 return dict.hasOwnProperty(key)
                     ? dict[key]
                     : null;
-                }
+                };
 
             this.set = function(key, value) {
                 dict[key] = value;
 
                 return value;
-            }
+            };
         };
 
         /**
          * Query an element with a CSS selector.
          *
-         * @param  string selector a CSS-selector-compatible query string.
+         * @param string selector a CSS-selector-compatible query string.
          *
          * @return DOMElement|null
          */
@@ -133,10 +133,10 @@
         function CanvasManager(requests, maxRequestTime) {
             "use strict";
 
-            var _drawingColors  = {{ colors|json_encode|raw }},
-                _storagePrefix  = 'timeline/',
-                _threshold      = 1,
-                _requests       = requests,
+            var _drawingColors = {{ colors|json_encode|raw }},
+                _storagePrefix = 'timeline/',
+                _threshold = 1,
+                _requests = requests,
                 _maxRequestTime = maxRequestTime;
 
             /**
@@ -183,17 +183,16 @@
                     xc,
                     drawableEvents,
                     mainEvents,
-                    elementId    = 'timeline_' + request.id,
+                    elementId = 'timeline_' + request.id,
                     canvasHeight = 0,
-                    gapPerEvent  = 38,
+                    gapPerEvent = 38,
                     colors = _drawingColors,
-                    space  = 10.5,
-                    ratio  = (width - space * 2) / max,
+                    space = 10.5,
+                    ratio = (width - space * 2) / max,
                     h = space,
                     x = request.left * ratio + space, // position
                     canvas = cache.get(elementId) || cache.set(elementId, document.getElementById(elementId)),
-                    ctx    = canvas.getContext("2d"),
-                    backingStoreRatio,
+                    ctx = canvas.getContext("2d"),
                     scaleRatio,
                     devicePixelRatio;
 
@@ -205,13 +204,10 @@
                 canvasHeight += gapPerEvent * drawableEvents.length;
 
                 // For retina displays so text and boxes will be crisp
-                devicePixelRatio  = window.devicePixelRatio          == "undefined" ? 1 : window.devicePixelRatio;
-                backingStoreRatio = ctx.webkitBackingStorePixelRatio == "undefined" ? 1 : ctx.webkitBackingStorePixelRatio;
-                scaleRatio        = devicePixelRatio / 1;
+                devicePixelRatio = window.devicePixelRatio == "undefined" ? 1 : window.devicePixelRatio;
+                scaleRatio = devicePixelRatio / 1;
 
-                canvasHeight += gapPerEvent * drawableEvents.length;
-
-                canvas.width  = width * scaleRatio;
+                canvas.width = width * scaleRatio;
                 canvas.height = canvasHeight * scaleRatio;
 
                 canvas.style.width = width + 'px';
@@ -260,14 +256,14 @@
                     // For each sub event, ...
                     event.periods.forEach(function(period) {
                         // Set the drawing style.
-                        ctx.fillStyle   = colors['default'];
+                        ctx.fillStyle = colors['default'];
                         ctx.strokeStyle = colors['default'];
 
                         if (colors[event.name]) {
-                            ctx.fillStyle   = colors[event.name];
+                            ctx.fillStyle = colors[event.name];
                             ctx.strokeStyle = colors[event.name];
                         } else if (colors[event.category]) {
-                            ctx.fillStyle   = colors[event.category];
+                            ctx.fillStyle = colors[event.category];
                             ctx.strokeStyle = colors[event.category];
                         }
 
@@ -357,20 +353,20 @@
             {
                 "use strict";
 
-                width     = width || getContainerWidth();
+                width = width || getContainerWidth();
                 threshold = threshold || this.getThreshold();
 
                 var self = this;
 
                 _requests.forEach(function(request) {
-                    self.drawOne(request, maxRequestTime, threshold, width);
+                    self.drawOne(request, _maxRequestTime, threshold, width);
                 });
             };
 
             this.getThreshold = function() {
                 var threshold = Sfjs.getPreference(_storagePrefix + 'threshold');
 
-                if (threshold === null) {
+                if (null === threshold) {
                     return _threshold;
                 }
 
@@ -387,7 +383,7 @@
 
                 return this;
             };
-        };
+        }
 
         function canvasAutoUpdateOnResizeAndSubmit(e) {
             e.preventDefault();
@@ -429,24 +425,25 @@
         }
 
         // Bind event handlers
-        var elementTimelineControl  = query('#timeline-control'),
+        var elementTimelineControl = query('#timeline-control'),
             elementThresholdControl = query('input[name="threshold"]');
 
-        window.onresize                 = canvasAutoUpdateOnResizeAndSubmit;
+        window.onresize = canvasAutoUpdateOnResizeAndSubmit;
         elementTimelineControl.onsubmit = canvasAutoUpdateOnResizeAndSubmit;
 
-        elementThresholdControl.onclick  = canvasAutoUpdateOnThresholdChange;
+        elementThresholdControl.onclick = canvasAutoUpdateOnThresholdChange;
         elementThresholdControl.onchange = canvasAutoUpdateOnThresholdChange;
-        elementThresholdControl.onkeyup  = canvasAutoUpdateOnThresholdChange;
+        elementThresholdControl.onkeyup = canvasAutoUpdateOnThresholdChange;
 
         window.setTimeout(function() {
             canvasAutoUpdateOnThresholdChange(null);
         }, 50);
 
-    //]]></script>
+    //]]>{% endautoescape %}</script>
 {% endblock %}
 
 {% macro dump_request_data(token, profile, events, origin) %}
+{% autoescape 'js' %}
 {% from _self import dump_events %}
                 {
                     "id": "{{ token }}",
@@ -455,13 +452,15 @@
 {{ dump_events(events) }}
                     ]
                 }
+{% endautoescape %}
 {% endmacro %}
 
 {% macro dump_events(events) %}
+{% autoescape 'js' %}
 {% for name, event in events %}
 {% if '__section__' != name %}
                         {
-                            "name": "{{ name|replace({"\\": "\\\\"}) }}",
+                            "name": "{{ name }}",
                             "category": "{{ event.category }}",
                             "origin": {{ "%F"|format(event.origin) }},
                             "starttime": {{ "%F"|format(event.starttime) }},
@@ -476,6 +475,7 @@
                         }{{ loop.last ? '' : ',' }}
 {% endif %}
 {% endfor %}
+{% endautoescape %}
 {% endmacro %}
 
 {% macro display_timeline(id, events, colors) %}

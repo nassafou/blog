@@ -2,12 +2,12 @@
 
 /*
  * This file is part of the Symfony package.
-*
-* (c) Fabien Potencier <fabien@symfony.com>
-*
-* For the full copyright and license information, please view the LICENSE
-* file that was distributed with this source code.
-*/
+ *
+ * (c) Fabien Potencier <fabien@symfony.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace Symfony\Component\Form\Extension\Core\ChoiceList;
 
@@ -64,30 +64,30 @@ class ObjectChoiceList extends ChoiceList
     /**
      * Creates a new object choice list.
      *
-     * @param array|\Traversable       $choices           The array of choices. Choices may also be given
+     * @param array|\Traversable        $choices          The array of choices. Choices may also be given
      *                                                    as hierarchy of unlimited depth by creating nested
      *                                                    arrays. The title of the sub-hierarchy can be
      *                                                    stored in the array key pointing to the nested
      *                                                    array. The topmost level of the hierarchy may also
      *                                                    be a \Traversable.
-     * @param string                   $labelPath         A property path pointing to the property used
+     * @param string                    $labelPath        A property path pointing to the property used
      *                                                    for the choice labels. The value is obtained
-             *                                            by calling the getter on the object. If the
+     *                                                    by calling the getter on the object. If the
      *                                                    path is NULL, the object's __toString() method
      *                                                    is used instead.
-     * @param array                    $preferredChoices  A flat array of choices that should be
+     * @param array                     $preferredChoices A flat array of choices that should be
      *                                                    presented to the user with priority.
-     * @param string                   $groupPath         A property path pointing to the property used
+     * @param string                    $groupPath        A property path pointing to the property used
      *                                                    to group the choices. Only allowed if
      *                                                    the choices are given as flat array.
-     * @param string                   $valuePath         A property path pointing to the property used
+     * @param string                    $valuePath        A property path pointing to the property used
      *                                                    for the choice values. If not given, integers
      *                                                    are generated instead.
      * @param PropertyAccessorInterface $propertyAccessor The reflection graph for reading property paths.
      */
     public function __construct($choices, $labelPath = null, array $preferredChoices = array(), $groupPath = null, $valuePath = null, PropertyAccessorInterface $propertyAccessor = null)
     {
-        $this->propertyAccessor = $propertyAccessor ?: PropertyAccess::getPropertyAccessor();
+        $this->propertyAccessor = $propertyAccessor ?: PropertyAccess::createPropertyAccessor();
         $this->labelPath = null !== $labelPath ? new PropertyPath($labelPath) : null;
         $this->groupPath = null !== $groupPath ? new PropertyPath($groupPath) : null;
         $this->valuePath = null !== $valuePath ? new PropertyPath($valuePath) : null;
@@ -105,7 +105,7 @@ class ObjectChoiceList extends ChoiceList
      * @param array              $preferredChoices The choices to display with priority.
      *
      * @throws InvalidArgumentException When passing a hierarchy of choices and using
-     *                                   the "groupPath" option at the same time.
+     *                                  the "groupPath" option at the same time.
      */
     protected function initialize($choices, array $labels, array $preferredChoices)
     {
@@ -128,11 +128,13 @@ class ObjectChoiceList extends ChoiceList
                 if (null === $group) {
                     $groupedChoices[$i] = $choice;
                 } else {
-                    if (!isset($groupedChoices[$group])) {
-                        $groupedChoices[$group] = array();
+                    $groupName = (string) $group;
+
+                    if (!isset($groupedChoices[$groupName])) {
+                        $groupedChoices[$groupName] = array();
                     }
 
-                    $groupedChoices[$group][$i] = $choice;
+                    $groupedChoices[$groupName][$i] = $choice;
                 }
             }
 
@@ -155,7 +157,7 @@ class ObjectChoiceList extends ChoiceList
      *
      * @param mixed $choice The choice to create a value for
      *
-     * @return integer|string A unique value without character limitations.
+     * @return int|string A unique value without character limitations.
      */
     protected function createValue($choice)
     {

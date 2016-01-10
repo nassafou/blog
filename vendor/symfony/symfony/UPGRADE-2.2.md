@@ -7,13 +7,13 @@
 
    Before:
 
-   ```
+   ```jinja
    {% render 'BlogBundle:Post:list' with { 'limit': 2 }, { 'alt': 'BlogBundle:Post:error' } %}
    ```
 
    After:
 
-   ```
+   ```jinja
    {% render controller('BlogBundle:Post:list', { 'limit': 2 }), { 'alt': 'BlogBundle:Post:error' } %}
    {# Or: #}
    {{ render(controller('BlogBundle:Post:list', { 'limit': 2 }), { 'alt': 'BlogBundle:Post:error'}) }}
@@ -29,7 +29,7 @@
 
    Before:
 
-   ```
+   ```jinja
    {% render 'BlogBundle:Post:list' with { 'limit': 2 }, {'standalone': true} %}
    {% render 'BlogBundle:Post:list' with { 'limit': 2 }, {'standalone': false} %}
    {% render 'BlogBundle:Post:list' with { 'limit': 2 }, {'standalone': 'js'} %}
@@ -37,7 +37,7 @@
 
    After:
 
-   ```
+   ```jinja
    {{ render(controller('BlogBundle:Post:list', { 'limit': 2 }), { 'strategy': 'esi'}) }}
    {{ render(controller('BlogBundle:Post:list', { 'limit': 2 }), { 'strategy': 'inline'}) }}
    {{ render(controller('BlogBundle:Post:list', { 'limit': 2 }), { 'strategy': 'hinclude'}) }}
@@ -65,7 +65,7 @@
    You should now use the `AcceptHeader` class which give you fluent methods to
    parse request accept-* headers. Some examples:
 
-   ```
+   ```php
    $accept = AcceptHeader::fromString($request->headers->get('Accept'));
    if ($accept->has('text/html') {
        $item = $accept->get('html');
@@ -95,7 +95,7 @@
 
    Before:
 
-   ```
+   ```jinja
    {{
        error.messagePluralization is null
            ? error.messageTemplate|trans(error.messageParameters, 'validators')
@@ -105,7 +105,7 @@
 
    After:
 
-   ```
+   ```jinja
    {{ error.message }}
    ```
 
@@ -117,7 +117,7 @@
 
    Before:
 
-   ```
+   ```php
    use Symfony\Component\Form\Extensions\Core\DataMapper\PropertyPathMapper;
 
    class CustomMapper extends PropertyPathMapper
@@ -133,7 +133,7 @@
 
    After:
 
-   ```
+   ```php
    use Symfony\Component\Form\Extensions\Core\DataMapper\PropertyPathMapper;
 
    class CustomMapper extends PropertyPathMapper
@@ -163,7 +163,7 @@
 
    Before:
 
-   ```
+   ```php
    use Symfony\Component\Form\Util\PropertyPath;
    use Symfony\Component\Form\Util\PropertyPathBuilder;
    use Symfony\Component\Form\Util\PropertyPathInterface;
@@ -176,7 +176,7 @@
 
    After:
 
-   ```
+   ```php
    use Symfony\Component\PropertyAccess\PropertyPath;
    use Symfony\Component\PropertyAccess\PropertyPathBuilder;
    use Symfony\Component\PropertyAccess\PropertyPathInterface;
@@ -192,7 +192,7 @@
 
    Before:
 
-   ```
+   ```php
    use Symfony\Component\Form\Util\FormUtil;
 
    $singular = FormUtil::singularify($plural);
@@ -200,7 +200,7 @@
 
    After:
 
-   ```
+   ```php
    use Symfony\Component\PropertyAccess\StringUtil;
 
    $singular = StringUtil::singularify($plural);
@@ -211,7 +211,7 @@
 
    Before:
 
-   ```
+   ```php
    use Symfony\Component\Form\Util\PropertyPath;
 
    $propertyPath = new PropertyPath('some.path');
@@ -222,7 +222,7 @@
 
    After (alternative 1):
 
-   ```
+   ```php
    use Symfony\Component\PropertyAccess\PropertyAccess;
 
    $propertyAccessor = PropertyAccess::getPropertyAccessor();
@@ -233,7 +233,7 @@
 
    After (alternative 2):
 
-   ```
+   ```php
    use Symfony\Component\PropertyAccess\PropertyAccess;
    use Symfony\Component\PropertyAccess\PropertyPath;
 
@@ -253,7 +253,7 @@
 
    Before:
 
-   ```
+   ```php
    $rootCollection = new RouteCollection();
    $subCollection = new RouteCollection();
    $rootCollection->addCollection($subCollection);
@@ -262,7 +262,7 @@
 
    After:
 
-   ```
+   ```php
    $rootCollection = new RouteCollection();
    $subCollection = new RouteCollection();
    $subCollection->add('foo', new Route('/foo'));
@@ -272,7 +272,7 @@
    Also one must call `addCollection` from the bottom to the top hierarchy.
    So the correct sequence is the following (and not the reverse):
 
-   ```
+   ```php
    $childCollection->addCollection($grandchildCollection);
    $rootCollection->addCollection($childCollection);
    ```
@@ -298,7 +298,7 @@
    use-case instead.
    Before: `$parentCollection->addCollection($collection, '/prefix', array(...), array(...))`
    After:
-   ```
+   ```php
    $collection->addPrefix('/prefix', array(...), array(...));
    $parentCollection->addCollection($collection);
    ```
@@ -312,7 +312,7 @@
 
    Before:
 
-   ```
+   ```php
    use Symfony\Component\Validator\ExecutionContext;
 
    public function validateCustomLogic(ExecutionContext $context)
@@ -320,7 +320,7 @@
 
    After:
 
-   ```
+   ```php
    use Symfony\Component\Validator\ExecutionContextInterface;
 
    public function validateCustomLogic(ExecutionContextInterface $context)
@@ -331,7 +331,7 @@
 
    Before:
 
-   ```
+   ```php
    use Symfony\Component\Validator\ConstraintValidatorInterface;
    use Symfony\Component\Validator\ExecutionContext;
 
@@ -346,7 +346,7 @@
 
    After:
 
-   ```
+   ```php
    use Symfony\Component\Validator\ConstraintValidatorInterface;
    use Symfony\Component\Validator\ExecutionContextInterface;
 
@@ -391,7 +391,7 @@
 
    Before:
 
-   ```
+   ```php
    use Symfony\Component\Validator\Mapping\ClassMetadataFactoryInterface;
 
    class MyMetadataFactory implements ClassMetadataFactoryInterface
@@ -405,7 +405,7 @@
 
    After:
 
-   ```
+   ```php
    use Symfony\Component\Validator\MetadataFactoryInterface;
    use Symfony\Component\Validator\Exception\NoSuchMetadataException;
 
@@ -432,14 +432,14 @@
 
    Before:
 
-   ```
+   ```php
    $metadataFactory = $validator->getMetadataFactory();
    $metadata = $metadataFactory->getClassMetadata('Vendor\MyClass');
    ```
 
    After:
 
-   ```
+   ```php
    $metadataFactory = $validator->getMetadataFactory();
    $metadata = $metadataFactory->getMetadataFor('Vendor\MyClass');
    ```
@@ -451,7 +451,7 @@
 
    Before:
 
-   ```
+   ```php
    use Symfony\Component\Validator\ExecutionContext;
 
    public function validateCustomLogic(ExecutionContext $context)
@@ -471,7 +471,7 @@
 
    After:
 
-   ```
+   ```php
    use Symfony\Component\Validator\ExecutionContextInterface;
 
    public function validateCustomLogic(ExecutionContextInterface $context)
@@ -482,12 +482,13 @@
    }
    ```
 
- * The method `ExecutionContext::addViolationAtSubPath()` was deprecated and
-   will be removed in Symfony 2.3. You should use `addViolationAt()` instead.
+ * The methods `ExecutionContext::addViolationAtSubPath()` and
+   `ExecutionContext::addViolationAtPath()` were deprecated and will be
+   removed in Symfony 2.3. You should use `addViolationAt()` instead.
 
    Before:
 
-   ```
+   ```php
    use Symfony\Component\Validator\ExecutionContext;
 
    public function validateCustomLogic(ExecutionContext $context)
@@ -500,7 +501,7 @@
 
    After:
 
-   ```
+   ```php
    use Symfony\Component\Validator\ExecutionContextInterface;
 
    public function validateCustomLogic(ExecutionContextInterface $context)
@@ -518,7 +519,7 @@
 
    Before:
 
-   ```
+   ```php
    use Symfony\Component\Validator\ExecutionContext;
 
    public function validateCustomLogic(ExecutionContext $context)
@@ -533,7 +534,7 @@
 
    After:
 
-   ```
+   ```php
    use Symfony\Component\Validator\ExecutionContextInterface;
 
    public function validateCustomLogic(ExecutionContextInterface $context)
@@ -552,20 +553,20 @@
 
    Before:
 
-   ```
+   ```php
    <?php echo $view['actions']->render('BlogBundle:Post:list', array('limit' => 2), array('alt' => 'BlogBundle:Post:error')) ?>
    ```
 
    After:
 
-   ```
+   ```php
    <?php echo $view['actions']->render($view['router']->generate('post_list', array('limit' => 2)), array('alt' => 'BlogBundle:Post:error')) ?>
    ```
 
    where `post_list` is the route name for the `BlogBundle:Post:list`
    controller, or if you don't want to create a route:
 
-   ```
+   ```php
    <?php echo $view['actions']->render(new ControllerReference('BlogBundle:Post:list', array('limit' => 2)), array('alt' => 'BlogBundle:Post:error')) ?>
    ```
 
@@ -576,7 +577,7 @@
 
    Before:
 
-   ```
+   ```yaml
    # app/config/config.yml
    framework:
        trust_proxy_headers: false
@@ -584,7 +585,7 @@
 
    After:
 
-   ```
+   ```yaml
    # app/config/config.yml
    framework:
       trusted_proxies: ['127.0.0.1', '10.0.0.1'] # a list of proxy IPs you trust
@@ -597,13 +598,13 @@
 
     Before:
 
-    ```
+    ```php
     use Symfony\Component\Security\Core\Validator\Constraint\UserPassword;
     ```
 
     After: (note the `s` at the end of `Constraint`)
 
-    ```
+    ```php
     use Symfony\Component\Security\Core\Validator\Constraints\UserPassword;
     ```
 
@@ -611,7 +612,7 @@
     ``service`` option that allows to specify a custom validator service name in
     order to validate the current logged-in user's password.
 
-    ```
+    ```php
     use Symfony\Component\Security\Core\Validator\Constraints\UserPassword;
 
     $constraint = new UserPassword(array(
@@ -627,14 +628,14 @@
 
     Before:
 
-    ```
+    ```php
     use Symfony\Component\Security\Core\Validator\Constraint\UserPassword;
     use Symfony\Component\Security\Core\Validator\Constraint\UserPasswordValidator;
     ```
 
     After:
 
-    ```
+    ```php
     use Symfony\Component\Security\Core\Validator\Constraints\UserPassword;
     use Symfony\Component\Security\Core\Validator\Constraints\UserPasswordValidator;
     ```
@@ -645,3 +646,23 @@
    extended with an optional `$context` array. This was necessary to allow for
    more complex use-cases that require context information during the
    (de)normalization and en-/decoding steps.
+
+### HttpKernel
+
+ * The `Symfony\Component\HttpKernel\Log\LoggerInterface` now extends `Psr\Log\LoggerInterface`.
+   So if you have implemented your own logger, you need to implement these methods:
+
+     * `emergency`
+     * `critical`
+     * `error`
+     * `warning`
+     * `log`
+
+#### Deprecations:
+
+ * The following Logger methods are deprecated and will be removed in 3.0. You should use the new PSR-3 methods:
+
+     * `emerg()` -> `emergency()`
+     * `crit()`  -> `critical()`
+     * `err()`   -> `error()`
+     * `warn()`  -> `warning()`

@@ -17,6 +17,32 @@ use Symfony\Component\Translation\Loader\ArrayLoader;
 
 class TranslatorTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @dataProvider      getInvalidLocalesTests
+     * @expectedException \InvalidArgumentException
+     */
+    public function testConstructorInvalidLocale($locale)
+    {
+        $translator = new Translator($locale, new MessageSelector());
+    }
+
+    /**
+     * @dataProvider getValidLocalesTests
+     */
+    public function testConstructorValidLocale($locale)
+    {
+        $translator = new Translator($locale, new MessageSelector());
+
+        $this->assertEquals($locale, $translator->getLocale());
+    }
+
+    public function testConstructorWithoutLocale()
+    {
+        $translator = new Translator(null, new MessageSelector());
+
+        $this->assertNull($translator->getLocale());
+    }
+
     public function testSetGetLocale()
     {
         $translator = new Translator('en', new MessageSelector());
@@ -25,6 +51,27 @@ class TranslatorTest extends \PHPUnit_Framework_TestCase
 
         $translator->setLocale('fr');
         $this->assertEquals('fr', $translator->getLocale());
+    }
+
+    /**
+     * @dataProvider      getInvalidLocalesTests
+     * @expectedException \InvalidArgumentException
+     */
+    public function testSetInvalidLocale($locale)
+    {
+        $translator = new Translator('fr', new MessageSelector());
+        $translator->setLocale($locale);
+    }
+
+    /**
+     * @dataProvider getValidLocalesTests
+     */
+    public function testSetValidLocale($locale)
+    {
+        $translator = new Translator($locale, new MessageSelector());
+        $translator->setLocale($locale);
+
+        $this->assertEquals($locale, $translator->getLocale());
     }
 
     public function testSetFallbackLocales()
@@ -55,6 +102,26 @@ class TranslatorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('bar (fr)', $translator->trans('bar'));
     }
 
+    /**
+     * @dataProvider      getInvalidLocalesTests
+     * @expectedException \InvalidArgumentException
+     */
+    public function testSetFallbackInvalidLocales($locale)
+    {
+        $translator = new Translator('fr', new MessageSelector());
+        $translator->setFallbackLocales(array('fr', $locale));
+    }
+
+    /**
+     * @dataProvider getValidLocalesTests
+     */
+    public function testSetFallbackValidLocales($locale)
+    {
+        $translator = new Translator($locale, new MessageSelector());
+        $translator->setFallbackLocales(array('fr', $locale));
+        // no assertion. this method just asserts that no exception is thrown
+    }
+
     public function testTransWithFallbackLocale()
     {
         $translator = new Translator('fr_FR', new MessageSelector());
@@ -67,12 +134,32 @@ class TranslatorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('foobar', $translator->trans('bar'));
     }
 
+    /**
+     * @dataProvider      getInvalidLocalesTests
+     * @expectedException \InvalidArgumentException
+     */
+    public function testAddResourceInvalidLocales($locale)
+    {
+        $translator = new Translator('fr', new MessageSelector());
+        $translator->addResource('array', array('foo' => 'foofoo'), $locale);
+    }
+
+    /**
+     * @dataProvider getValidLocalesTests
+     */
+    public function testAddResourceValidLocales($locale)
+    {
+        $translator = new Translator('fr', new MessageSelector());
+        $translator->addResource('array', array('foo' => 'foofoo'), $locale);
+        // no assertion. this method just asserts that no exception is thrown
+    }
+
     public function testAddResourceAfterTrans()
     {
         $translator = new Translator('fr', new MessageSelector());
         $translator->addLoader('array', new ArrayLoader());
 
-        $translator->setFallbackLocale(array('en'));
+        $translator->setFallbackLocales(array('en'));
 
         $translator->addResource('array', array('foo' => 'foofoo'), 'en');
         $this->assertEquals('foofoo', $translator->trans('foo'));
@@ -142,7 +229,7 @@ class TranslatorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      */
     public function testWhenAResourceHasNoRegisteredLoader()
     {
@@ -162,6 +249,32 @@ class TranslatorTest extends \PHPUnit_Framework_TestCase
         $translator->addResource('array', array((string) $id => $translation), $locale, $domain);
 
         $this->assertEquals($expected, $translator->trans($id, $parameters, $domain, $locale));
+    }
+
+    /**
+     * @dataProvider      getInvalidLocalesTests
+     * @expectedException \InvalidArgumentException
+     */
+    public function testTransInvalidLocale($locale)
+    {
+        $translator = new Translator('en', new MessageSelector());
+        $translator->addLoader('array', new ArrayLoader());
+        $translator->addResource('array', array('foo' => 'foofoo'), 'en');
+
+        $translator->trans('foo', array(), '', $locale);
+    }
+
+    /**
+     * @dataProvider      getValidLocalesTests
+     */
+    public function testTransValidLocale($locale)
+    {
+        $translator = new Translator('en', new MessageSelector());
+        $translator->addLoader('array', new ArrayLoader());
+        $translator->addResource('array', array('foo' => 'foofoo'), 'en');
+
+        $translator->trans('foo', array(), '', $locale);
+        // no assertion. this method just asserts that no exception is thrown
     }
 
     /**
@@ -188,6 +301,32 @@ class TranslatorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $translator->transChoice($id, $number, $parameters, $domain, $locale));
     }
 
+    /**
+     * @dataProvider      getInvalidLocalesTests
+     * @expectedException \InvalidArgumentException
+     */
+    public function testTransChoiceInvalidLocale($locale)
+    {
+        $translator = new Translator('en', new MessageSelector());
+        $translator->addLoader('array', new ArrayLoader());
+        $translator->addResource('array', array('foo' => 'foofoo'), 'en');
+
+        $translator->transChoice('foo', 1, array(), '', $locale);
+    }
+
+    /**
+     * @dataProvider      getValidLocalesTests
+     */
+    public function testTransChoiceValidLocale($locale)
+    {
+        $translator = new Translator('en', new MessageSelector());
+        $translator->addLoader('array', new ArrayLoader());
+        $translator->addResource('array', array('foo' => 'foofoo'), 'en');
+
+        $translator->transChoice('foo', 1, array(), '', $locale);
+        // no assertion. this method just asserts that no exception is thrown
+    }
+
     public function getTransFileTests()
     {
         return array(
@@ -205,30 +344,30 @@ class TranslatorTest extends \PHPUnit_Framework_TestCase
     public function getTransTests()
     {
         return array(
-            array('Symfony2 est super !', 'Symfony2 is great!', 'Symfony2 est super !', array(), 'fr', ''),
-            array('Symfony2 est awesome !', 'Symfony2 is %what%!', 'Symfony2 est %what% !', array('%what%' => 'awesome'), 'fr', ''),
-            array('Symfony2 est super !', new String('Symfony2 is great!'), 'Symfony2 est super !', array(), 'fr', ''),
+            array('Symfony est super !', 'Symfony is great!', 'Symfony est super !', array(), 'fr', ''),
+            array('Symfony est awesome !', 'Symfony is %what%!', 'Symfony est %what% !', array('%what%' => 'awesome'), 'fr', ''),
+            array('Symfony est super !', new StringClass('Symfony is great!'), 'Symfony est super !', array(), 'fr', ''),
         );
     }
 
     public function getFlattenedTransTests()
     {
         $messages = array(
-            'symfony2' => array(
+            'symfony' => array(
                 'is' => array(
-                    'great' => 'Symfony2 est super!'
-                )
+                    'great' => 'Symfony est super!',
+                ),
             ),
             'foo' => array(
                 'bar' => array(
-                    'baz' => 'Foo Bar Baz'
+                    'baz' => 'Foo Bar Baz',
                 ),
                 'baz' => 'Foo Baz',
             ),
         );
 
         return array(
-            array('Symfony2 est super!', $messages, 'symfony2.is.great'),
+            array('Symfony est super!', $messages, 'symfony.is.great'),
             array('Foo Bar Baz', $messages, 'foo.bar.baz'),
             array('Foo Baz', $messages, 'foo.baz'),
         );
@@ -237,9 +376,9 @@ class TranslatorTest extends \PHPUnit_Framework_TestCase
     public function getTransChoiceTests()
     {
         return array(
-            array('Il y a 0 pomme', '{0} There is no apples|{1} There is one apple|]1,Inf] There is %count% apples', '[0,1] Il y a %count% pomme|]1,Inf] Il y a %count% pommes', 0, array('%count%' => 0), 'fr', ''),
-            array('Il y a 1 pomme', '{0} There is no apples|{1} There is one apple|]1,Inf] There is %count% apples', '[0,1] Il y a %count% pomme|]1,Inf] Il y a %count% pommes', 1, array('%count%' => 1), 'fr', ''),
-            array('Il y a 10 pommes', '{0} There is no apples|{1} There is one apple|]1,Inf] There is %count% apples', '[0,1] Il y a %count% pomme|]1,Inf] Il y a %count% pommes', 10, array('%count%' => 10), 'fr', ''),
+            array('Il y a 0 pomme', '{0} There are no appless|{1} There is one apple|]1,Inf] There is %count% apples', '[0,1] Il y a %count% pomme|]1,Inf] Il y a %count% pommes', 0, array('%count%' => 0), 'fr', ''),
+            array('Il y a 1 pomme', '{0} There are no appless|{1} There is one apple|]1,Inf] There is %count% apples', '[0,1] Il y a %count% pomme|]1,Inf] Il y a %count% pommes', 1, array('%count%' => 1), 'fr', ''),
+            array('Il y a 10 pommes', '{0} There are no appless|{1} There is one apple|]1,Inf] There is %count% apples', '[0,1] Il y a %count% pomme|]1,Inf] Il y a %count% pommes', 10, array('%count%' => 10), 'fr', ''),
 
             array('Il y a 0 pomme', 'There is one apple|There is %count% apples', 'Il y a %count% pomme|Il y a %count% pommes', 0, array('%count%' => 0), 'fr', ''),
             array('Il y a 1 pomme', 'There is one apple|There is %count% apples', 'Il y a %count% pomme|Il y a %count% pommes', 1, array('%count%' => 1), 'fr', ''),
@@ -249,11 +388,45 @@ class TranslatorTest extends \PHPUnit_Framework_TestCase
             array('Il y a 1 pomme', 'one: There is one apple|more: There is %count% apples', 'one: Il y a %count% pomme|more: Il y a %count% pommes', 1, array('%count%' => 1), 'fr', ''),
             array('Il y a 10 pommes', 'one: There is one apple|more: There is %count% apples', 'one: Il y a %count% pomme|more: Il y a %count% pommes', 10, array('%count%' => 10), 'fr', ''),
 
-            array('Il n\'y a aucune pomme', '{0} There is no apple|one: There is one apple|more: There is %count% apples', '{0} Il n\'y a aucune pomme|one: Il y a %count% pomme|more: Il y a %count% pommes', 0, array('%count%' => 0), 'fr', ''),
-            array('Il y a 1 pomme', '{0} There is no apple|one: There is one apple|more: There is %count% apples', '{0} Il n\'y a aucune pomme|one: Il y a %count% pomme|more: Il y a %count% pommes', 1, array('%count%' => 1), 'fr', ''),
-            array('Il y a 10 pommes', '{0} There is no apple|one: There is one apple|more: There is %count% apples', '{0} Il n\'y a aucune pomme|one: Il y a %count% pomme|more: Il y a %count% pommes', 10, array('%count%' => 10), 'fr', ''),
+            array('Il n\'y a aucune pomme', '{0} There are no apples|one: There is one apple|more: There is %count% apples', '{0} Il n\'y a aucune pomme|one: Il y a %count% pomme|more: Il y a %count% pommes', 0, array('%count%' => 0), 'fr', ''),
+            array('Il y a 1 pomme', '{0} There are no apples|one: There is one apple|more: There is %count% apples', '{0} Il n\'y a aucune pomme|one: Il y a %count% pomme|more: Il y a %count% pommes', 1, array('%count%' => 1), 'fr', ''),
+            array('Il y a 10 pommes', '{0} There are no apples|one: There is one apple|more: There is %count% apples', '{0} Il n\'y a aucune pomme|one: Il y a %count% pomme|more: Il y a %count% pommes', 10, array('%count%' => 10), 'fr', ''),
 
-            array('Il y a 0 pomme', new String('{0} There is no apples|{1} There is one apple|]1,Inf] There is %count% apples'), '[0,1] Il y a %count% pomme|]1,Inf] Il y a %count% pommes', 0, array('%count%' => 0), 'fr', ''),
+            array('Il y a 0 pomme', new StringClass('{0} There are no appless|{1} There is one apple|]1,Inf] There is %count% apples'), '[0,1] Il y a %count% pomme|]1,Inf] Il y a %count% pommes', 0, array('%count%' => 0), 'fr', ''),
+        );
+    }
+
+    public function getInvalidLocalesTests()
+    {
+        return array(
+            array('fr FR'),
+            array('français'),
+            array('fr+en'),
+            array('utf#8'),
+            array('fr&en'),
+            array('fr~FR'),
+            array(' fr'),
+            array('fr '),
+            array('fr*'),
+            array('fr/FR'),
+            array('fr\\FR'),
+        );
+    }
+
+    public function getValidLocalesTests()
+    {
+        return array(
+            array(''),
+            array(null),
+            array('fr'),
+            array('francais'),
+            array('FR'),
+            array('frFR'),
+            array('fr-FR'),
+            array('fr_FR'),
+            array('fr.FR'),
+            array('fr-FR.UTF8'),
+            array('sr@latin'),
         );
     }
 
@@ -277,20 +450,19 @@ class TranslatorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('10 things', $translator->transChoice('some_message2', 10, array('%count%' => 10)));
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testTransChoiceFallbackWithNoTranslation()
     {
         $translator = new Translator('ru', new MessageSelector());
         $translator->setFallbackLocales(array('en'));
         $translator->addLoader('array', new ArrayLoader());
 
-        $this->assertEquals('10 things', $translator->transChoice('some_message2', 10, array('%count%' => 10)));
+        // consistent behavior with Translator::trans(), which returns the string
+        // unchanged if it can't be found
+        $this->assertEquals('some_message2', $translator->transChoice('some_message2', 10, array('%count%' => 10)));
     }
 }
 
-class String
+class StringClass
 {
     protected $str;
 
