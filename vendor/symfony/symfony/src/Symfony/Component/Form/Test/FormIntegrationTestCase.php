@@ -12,6 +12,7 @@
 namespace Symfony\Component\Form\Test;
 
 use Symfony\Component\Form\Forms;
+use Symfony\Component\Form\FormFactoryInterface;
 
 /**
  * @author Bernhard Schussek <bschussek@gmail.com>
@@ -19,16 +20,12 @@ use Symfony\Component\Form\Forms;
 abstract class FormIntegrationTestCase extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var \Symfony\Component\Form\FormFactoryInterface
+     * @var FormFactoryInterface
      */
     protected $factory;
 
     protected function setUp()
     {
-        if (!class_exists('Symfony\Component\EventDispatcher\EventDispatcher')) {
-            $this->markTestSkipped('The "EventDispatcher" component is not available');
-        }
-
         $this->factory = Forms::createFormFactoryBuilder()
             ->addExtensions($this->getExtensions())
             ->getFormFactory();

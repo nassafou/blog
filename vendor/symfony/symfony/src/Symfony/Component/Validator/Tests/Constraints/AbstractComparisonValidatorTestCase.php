@@ -11,56 +11,52 @@
 
 namespace Symfony\Component\Validator\Tests\Constraints;
 
+use Symfony\Component\Intl\Util\IntlTestHelper;
 use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\Constraints\AbstractComparisonValidator;
+
+class ComparisonTest_Class
+{
+    protected $value;
+
+    public function __construct($value)
+    {
+        $this->value = $value;
+    }
+
+    public function __toString()
+    {
+        return (string) $this->value;
+    }
+}
 
 /**
  * @author Daniel Holmes <daniel@danielholmes.org>
  */
-abstract class AbstractComparisonValidatorTestCase extends \PHPUnit_Framework_TestCase
+abstract class AbstractComparisonValidatorTestCase extends AbstractConstraintValidatorTest
 {
-    private $validator;
-    private $context;
-
-    protected function setUp()
-    {
-        $this->validator = $this->createValidator();
-        $this->context = $this->getMockBuilder('Symfony\Component\Validator\ExecutionContext')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->validator->initialize($this->context);
-    }
-
     /**
-     * @return AbstractComparisonValidator
+     * @expectedException \Symfony\Component\Validator\Exception\ConstraintDefinitionException
      */
-    abstract protected function createValidator();
-
     public function testThrowsConstraintExceptionIfNoValueOrProperty()
     {
-        $this->setExpectedException('Symfony\Component\Validator\Exception\ConstraintDefinitionException');
-
         $comparison = $this->createConstraint(array());
+
         $this->validator->validate('some value', $comparison);
     }
 
     /**
      * @dataProvider provideValidComparisons
+     *
      * @param mixed $dirtyValue
      * @param mixed $comparisonValue
      */
     public function testValidComparisonToValue($dirtyValue, $comparisonValue)
     {
-        $this->context->expects($this->never())
-            ->method('addViolation');
-
         $constraint = $this->createConstraint(array('value' => $comparisonValue));
 
-        $this->context->expects($this->any())
-            ->method('getPropertyPath')
-            ->will($this->returnValue('property1'));
-
         $this->validator->validate($dirtyValue, $constraint);
+
+        $this->assertNoViolation();
     }
 
     /**
@@ -70,29 +66,35 @@ abstract class AbstractComparisonValidatorTestCase extends \PHPUnit_Framework_Te
 
     /**
      * @dataProvider provideInvalidComparisons
+     *
      * @param mixed  $dirtyValue
+     * @param mixed  $dirtyValueAsString
      * @param mixed  $comparedValue
      * @param mixed  $comparedValueString
      * @param string $comparedValueType
      */
-    public function testInvalidComparisonToValue($dirtyValue, $comparedValue, $comparedValueString, $comparedValueType)
+    public function testInvalidComparisonToValue($dirtyValue, $dirtyValueAsString, $comparedValue, $comparedValueString, $comparedValueType)
     {
+        // Conversion of dates to string differs between ICU versions
+        // Make sure we have the correct version loaded
+        if ($dirtyValue instanceof \DateTime) {
+            IntlTestHelper::requireIntl($this);
+
+            if (PHP_VERSION_ID < 50304 && !(extension_loaded('intl') && method_exists('IntlDateFormatter', 'setTimeZone'))) {
+                $this->markTestSkipped('Intl supports formatting DateTime objects since 5.3.4');
+            }
+        }
+
         $constraint = $this->createConstraint(array('value' => $comparedValue));
         $constraint->message = 'Constraint Message';
 
-        $this->context->expects($this->any())
-            ->method('getPropertyPath')
-            ->will($this->returnValue('property1'));
-
-        $this->context->expects($this->once())
-            ->method('addViolation')
-            ->with('Constraint Message', array(
-                '{{ value }}' => $comparedValueString,
-                '{{ compared_value }}' => $comparedValueString,
-                '{{ compared_value_type }}' => $comparedValueType
-            ));
-
         $this->validator->validate($dirtyValue, $constraint);
+
+        $this->buildViolation('Constraint Message')
+            ->setParameter('{{ value }}', $dirtyValueAsString)
+            ->setParameter('{{ compared_value }}', $comparedValueString)
+            ->setParameter('{{ compared_value_type }}', $comparedValueType)
+            ->assertRaised();
     }
 
     /**
@@ -101,7 +103,8 @@ abstract class AbstractComparisonValidatorTestCase extends \PHPUnit_Framework_Te
     abstract public function provideInvalidComparisons();
 
     /**
-     * @param  array      $options Options for the constraint
+     * @param array $options Options for the constraint
+     *
      * @return Constraint
      */
     abstract protected function createConstraint(array $options);

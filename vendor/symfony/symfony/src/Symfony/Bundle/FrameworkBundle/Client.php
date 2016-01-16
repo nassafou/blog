@@ -31,7 +31,7 @@ class Client extends BaseClient
     private $profiler = false;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function __construct(KernelInterface $kernel, array $server = array(), History $history = null, CookieJar $cookieJar = null)
     {
@@ -160,8 +160,12 @@ class Client extends BaseClient
             $profilerCode = '$kernel->getContainer()->get(\'profiler\')->enable();';
         }
 
-        return <<<EOF
+        $errorReporting = error_reporting();
+
+        $code = <<<EOF
 <?php
+
+error_reporting($errorReporting);
 
 if ('$autoloader') {
     require_once '$autoloader';
@@ -171,7 +175,10 @@ require_once '$path';
 \$kernel = unserialize('$kernel');
 \$kernel->boot();
 $profilerCode
-echo serialize(\$kernel->handle(unserialize('$request')));
+
+\$request = unserialize('$request');
 EOF;
+
+        return $code.$this->getHandleScript();
     }
 }

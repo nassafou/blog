@@ -12,7 +12,6 @@
 namespace Symfony\Component\Security\Http;
 
 use Symfony\Component\Security\Core\SecurityContextInterface;
-
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
@@ -35,7 +34,9 @@ class HttpUtils
      * Constructor.
      *
      * @param UrlGeneratorInterface                       $urlGenerator A UrlGeneratorInterface instance
-     * @param UrlMatcherInterface|RequestMatcherInterface $urlMatcher   The Url or Request matcher
+     * @param UrlMatcherInterface|RequestMatcherInterface $urlMatcher   The URL or Request matcher
+     *
+     * @throws \InvalidArgumentException
      */
     public function __construct(UrlGeneratorInterface $urlGenerator = null, $urlMatcher = null)
     {
@@ -51,9 +52,9 @@ class HttpUtils
      *
      * @param Request $request A Request instance
      * @param string  $path    A path (an absolute path (/foo), an absolute URL (http://...), or a route name (foo))
-     * @param integer $status  The status code
+     * @param int     $status  The status code
      *
-     * @return Response A RedirectResponse instance
+     * @return RedirectResponse A RedirectResponse instance
      */
     public function createRedirectResponse(Request $request, $path, $status = 302)
     {
@@ -94,7 +95,7 @@ class HttpUtils
      * @param Request $request A Request instance
      * @param string  $path    A path (an absolute path (/foo), an absolute URL (http://...), or a route name (foo))
      *
-     * @return Boolean true if the path is the same as the one from the Request, false otherwise
+     * @return bool true if the path is the same as the one from the Request, false otherwise
      */
     public function checkRequestPath(Request $request, $path)
     {
@@ -122,9 +123,11 @@ class HttpUtils
      * Generates a URI, based on the given path or absolute URL.
      *
      * @param Request $request A Request instance
-     * @param string $path A path (an absolute path (/foo), an absolute URL (http://...), or a route name (foo))
+     * @param string  $path    A path (an absolute path (/foo), an absolute URL (http://...), or a route name (foo))
      *
      * @return string An absolute URL
+     *
+     * @throws \LogicException
      */
     public function generateUri($request, $path)
     {
@@ -142,7 +145,7 @@ class HttpUtils
 
         $url = $this->urlGenerator->generate($path, $request->attributes->all(), UrlGeneratorInterface::ABSOLUTE_URL);
 
-        // unnecessary query string parameters must be removed from url
+        // unnecessary query string parameters must be removed from URL
         // (ie. query parameters that are presents in $attributes)
         // fortunately, they all are, so we have to remove entire query string
         $position = strpos($url, '?');

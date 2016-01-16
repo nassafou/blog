@@ -17,7 +17,7 @@ namespace Symfony\Component\Finder\Expression;
 class Expression implements ValueInterface
 {
     const TYPE_REGEX = 1;
-    const TYPE_GLOB  = 2;
+    const TYPE_GLOB = 2;
 
     /**
      * @var ValueInterface
@@ -130,7 +130,7 @@ class Expression implements ValueInterface
     public function getGlob()
     {
         if (self::TYPE_GLOB !== $this->value->getType()) {
-            throw new \LogicException('Regex cant be transformed to glob.');
+            throw new \LogicException('Regex can\'t be transformed to glob.');
         }
 
         return $this->value;

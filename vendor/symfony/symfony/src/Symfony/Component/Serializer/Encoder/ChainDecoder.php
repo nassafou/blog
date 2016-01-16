@@ -11,7 +11,6 @@
 
 namespace Symfony\Component\Serializer\Encoder;
 
-use Symfony\Component\Serializer\Encoder\DecoderInterface;
 use Symfony\Component\Serializer\Exception\RuntimeException;
 
 /**
@@ -59,6 +58,7 @@ class ChainDecoder implements DecoderInterface
      * @param string $format
      *
      * @return DecoderInterface
+     *
      * @throws RuntimeException if no decoder is found
      */
     private function getDecoder($format)

@@ -23,14 +23,14 @@ use Symfony\Component\Form\Exception\InvalidArgumentException;
 class FormRegistry implements FormRegistryInterface
 {
     /**
-     * Extensions
+     * Extensions.
      *
      * @var FormExtensionInterface[] An array of FormExtensionInterface
      */
     private $extensions = array();
 
     /**
-     * @var array
+     * @var FormTypeInterface[]
      */
     private $types = array();
 
@@ -69,16 +69,10 @@ class FormRegistry implements FormRegistryInterface
      */
     public function getType($name)
     {
-        if (!is_string($name)) {
-            throw new UnexpectedTypeException($name, 'string');
-        }
-
         if (!isset($this->types[$name])) {
-            /** @var FormTypeInterface $type */
             $type = null;
 
             foreach ($this->extensions as $extension) {
-                /* @var FormExtensionInterface $extension */
                 if ($extension->hasType($name)) {
                     $type = $extension->getType($name);
                     break;
@@ -115,7 +109,6 @@ class FormRegistry implements FormRegistryInterface
         $typeExtensions = array();
 
         foreach ($this->extensions as $extension) {
-            /* @var FormExtensionInterface $extension */
             $typeExtensions = array_merge(
                 $typeExtensions,
                 $extension->getTypeExtensions($type->getName())
@@ -156,7 +149,6 @@ class FormRegistry implements FormRegistryInterface
             $guessers = array();
 
             foreach ($this->extensions as $extension) {
-                /* @var FormExtensionInterface $extension */
                 $guesser = $extension->getTypeGuesser();
 
                 if ($guesser) {

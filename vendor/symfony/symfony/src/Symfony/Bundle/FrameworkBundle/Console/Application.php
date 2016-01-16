@@ -11,7 +11,7 @@
 
 namespace Symfony\Bundle\FrameworkBundle\Console;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\Console\Application as BaseApplication;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -63,7 +63,7 @@ class Application extends BaseApplication
      * @param InputInterface  $input  An Input instance
      * @param OutputInterface $output An Output instance
      *
-     * @return integer 0 if everything went fine, or an error code
+     * @return int 0 if everything went fine, or an error code
      */
     public function doRun(InputInterface $input, OutputInterface $output)
     {
@@ -78,7 +78,7 @@ class Application extends BaseApplication
         $container = $this->kernel->getContainer();
 
         foreach ($this->all() as $command) {
-            if ($command instanceof ContainerAwareCommand) {
+            if ($command instanceof ContainerAwareInterface) {
                 $command->setContainer($container);
             }
         }

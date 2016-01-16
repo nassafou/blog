@@ -29,7 +29,7 @@ class OutputFormatterStyleStack
     /**
      * Constructor.
      *
-     * @param OutputFormatterStyleInterface $emptyStyle
+     * @param OutputFormatterStyleInterface|null $emptyStyle
      */
     public function __construct(OutputFormatterStyleInterface $emptyStyle = null)
     {
@@ -58,11 +58,11 @@ class OutputFormatterStyleStack
     /**
      * Pops a style from the stack.
      *
-     * @param OutputFormatterStyleInterface $style
+     * @param OutputFormatterStyleInterface|null $style
      *
      * @return OutputFormatterStyleInterface
      *
-     * @throws \InvalidArgumentException  When style tags incorrectly nested
+     * @throws \InvalidArgumentException When style tags incorrectly nested
      */
     public function pop(OutputFormatterStyleInterface $style = null)
     {
@@ -96,7 +96,7 @@ class OutputFormatterStyleStack
             return $this->emptyStyle;
         }
 
-        return $this->styles[count($this->styles)-1];
+        return $this->styles[count($this->styles) - 1];
     }
 
     /**

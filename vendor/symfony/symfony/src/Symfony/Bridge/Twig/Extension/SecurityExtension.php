@@ -47,14 +47,12 @@ class SecurityExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            'is_granted' => new \Twig_Function_Method($this, 'isGranted'),
+            new \Twig_SimpleFunction('is_granted', array($this, 'isGranted')),
         );
     }
 
     /**
-     * Returns the name of the extension.
-     *
-     * @return string The extension name
+     * {@inheritdoc}
      */
     public function getName()
     {

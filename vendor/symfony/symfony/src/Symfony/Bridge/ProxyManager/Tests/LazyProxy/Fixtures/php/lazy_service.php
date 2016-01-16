@@ -11,7 +11,7 @@ use Symfony\Component\DependencyInjection\Parameter;
 use Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag;
 
 /**
- * ProjectServiceContainer
+ * ProjectServiceContainer.
  *
  * This class has been auto-generated
  * by the Symfony Dependency Injection Component.
@@ -26,9 +26,6 @@ class LazyServiceProjectServiceContainer extends Container
         $this->services =
         $this->scopedServices =
         $this->scopeStacks = array();
-
-        $this->set('service_container', $this);
-
         $this->scopes = array();
         $this->scopeChildren = array();
     }
@@ -39,7 +36,7 @@ class LazyServiceProjectServiceContainer extends Container
      * This service is shared.
      * This method always returns the same instance of the service.
      *
-     * @param boolean $lazyLoad whether to try lazy-loading the service with a proxy
+     * @param bool $lazyLoad whether to try lazy-loading the service with a proxy
      *
      * @return stdClass A stdClass instance.
      */
@@ -49,10 +46,10 @@ class LazyServiceProjectServiceContainer extends Container
             $container = $this;
 
             return $this->services['foo'] = new stdClass_c1d194250ee2e2b7d2eab8b8212368a8(
-                function (& $wrappedInstance, \ProxyManager\Proxy\LazyLoadingInterface $proxy) use ($container) {
-                    $proxy->setProxyInitializer(null);
-
+                function (&$wrappedInstance, \ProxyManager\Proxy\LazyLoadingInterface $proxy) use ($container) {
                     $wrappedInstance = $container->getFooService(false);
+
+                    $proxy->setProxyInitializer(null);
 
                     return true;
                 }
@@ -65,7 +62,6 @@ class LazyServiceProjectServiceContainer extends Container
 
 class stdClass_c1d194250ee2e2b7d2eab8b8212368a8 extends \stdClass implements \ProxyManager\Proxy\LazyLoadingInterface, \ProxyManager\Proxy\ValueHolderInterface
 {
-
     /**
      * @var \Closure|null initializer responsible for generating the wrapped object
      */
@@ -98,7 +94,7 @@ class stdClass_c1d194250ee2e2b7d2eab8b8212368a8 extends \stdClass implements \Pr
 
     /**
      * @param string $name
-     * @param mixed $value
+     * @param mixed  $value
      */
     public function __set($name, $value)
     {
@@ -155,7 +151,7 @@ class stdClass_c1d194250ee2e2b7d2eab8b8212368a8 extends \stdClass implements \Pr
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function setProxyInitializer(\Closure $initializer = null)
     {
@@ -163,7 +159,7 @@ class stdClass_c1d194250ee2e2b7d2eab8b8212368a8 extends \stdClass implements \Pr
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getProxyInitializer()
     {
@@ -171,7 +167,7 @@ class stdClass_c1d194250ee2e2b7d2eab8b8212368a8 extends \stdClass implements \Pr
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function initializeProxy()
     {
@@ -179,7 +175,7 @@ class stdClass_c1d194250ee2e2b7d2eab8b8212368a8 extends \stdClass implements \Pr
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function isProxyInitialized()
     {
@@ -187,11 +183,10 @@ class stdClass_c1d194250ee2e2b7d2eab8b8212368a8 extends \stdClass implements \Pr
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getWrappedValueHolderValue()
     {
         return $this->valueHolder5157dd96e88c0;
     }
-
 }

@@ -33,7 +33,7 @@ abstract class AbstractToken implements TokenInterface
     /**
      * Constructor.
      *
-     * @param RoleInterface[] $roles An array of roles
+     * @param RoleInterface[]|string[] $roles An array of roles
      *
      * @throws \InvalidArgumentException
      */
@@ -74,6 +74,9 @@ abstract class AbstractToken implements TokenInterface
         return (string) $this->user;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getUser()
     {
         return $this->user;
@@ -85,7 +88,8 @@ abstract class AbstractToken implements TokenInterface
      * The user can be a UserInterface instance, or an object implementing
      * a __toString method or the username as a regular string.
      *
-     * @param mixed $user The user
+     * @param string|object $user The user
+     *
      * @throws \InvalidArgumentException
      */
     public function setUser($user)
@@ -128,7 +132,7 @@ abstract class AbstractToken implements TokenInterface
      */
     public function setAuthenticated($authenticated)
     {
-        $this->authenticated = (Boolean) $authenticated;
+        $this->authenticated = (bool) $authenticated;
     }
 
     /**
@@ -146,7 +150,14 @@ abstract class AbstractToken implements TokenInterface
      */
     public function serialize()
     {
-        return serialize(array($this->user, $this->authenticated, $this->roles, $this->attributes));
+        return serialize(
+            array(
+                is_object($this->user) ? clone $this->user : $this->user,
+                $this->authenticated,
+                $this->roles,
+                $this->attributes,
+            )
+        );
     }
 
     /**
@@ -182,7 +193,7 @@ abstract class AbstractToken implements TokenInterface
      *
      * @param string $name The attribute name
      *
-     * @return Boolean true if the attribute exists, false otherwise
+     * @return bool true if the attribute exists, false otherwise
      */
     public function hasAttribute($name)
     {
@@ -219,12 +230,12 @@ abstract class AbstractToken implements TokenInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function __toString()
     {
         $class = get_class($this);
-        $class = substr($class, strrpos($class, '\\')+1);
+        $class = substr($class, strrpos($class, '\\') + 1);
 
         $roles = array();
         foreach ($this->roles as $role) {
@@ -241,7 +252,7 @@ abstract class AbstractToken implements TokenInterface
         }
 
         if ($this->user instanceof EquatableInterface) {
-            return ! (Boolean) $this->user->isEqualTo($user);
+            return !(bool) $this->user->isEqualTo($user);
         }
 
         if ($this->user->getPassword() !== $user->getPassword()) {

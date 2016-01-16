@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Symfony\Component\Security\Tests\Http;
+namespace Symfony\Component\Security\Tests\Http\Authentication;
 
 use Symfony\Component\Security\Http\Authentication\DefaultAuthenticationSuccessHandler;
 
@@ -23,10 +23,6 @@ class DefaultAuthenticationSuccessHandlerTest extends \PHPUnit_Framework_TestCas
 
     protected function setUp()
     {
-        if (!class_exists('Symfony\Component\HttpFoundation\Request')) {
-            $this->markTestSkipped('The "HttpFoundation" component is not available');
-        }
-
         $this->httpUtils = $this->getMock('Symfony\Component\Security\Http\HttpUtils');
         $this->request = $this->getMock('Symfony\Component\HttpFoundation\Request');
         $this->request->headers = $this->getMock('Symfony\Component\HttpFoundation\HeaderBag');
@@ -47,7 +43,7 @@ class DefaultAuthenticationSuccessHandlerTest extends \PHPUnit_Framework_TestCas
     {
         $options = array(
             'always_use_default_target_path' => true,
-            'default_target_path' => '/dashboard'
+            'default_target_path' => '/dashboard',
         );
 
         $response = $this->expectRedirectResponse('/dashboard');

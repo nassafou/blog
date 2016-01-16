@@ -22,17 +22,12 @@ class Scope
     private $parent;
 
     /**
-     * @var Scope[]
-     */
-    private $children;
-
-    /**
      * @var array
      */
     private $data;
 
     /**
-     * @var boolean
+     * @var bool
      */
     private $left;
 
@@ -53,10 +48,7 @@ class Scope
      */
     public function enter()
     {
-        $child = new self($this);
-        $this->children[] = $child;
-
-        return $child;
+        return new self($this);
     }
 
     /**
@@ -97,7 +89,7 @@ class Scope
      *
      * @param string $key
      *
-     * @return boolean
+     * @return bool
      */
     public function has($key)
     {

@@ -17,13 +17,11 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 /**
  * @author Bernhard Schussek <bschussek@gmail.com>
- *
- * @api
  */
 class AllValidator extends ConstraintValidator
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function validate($value, Constraint $constraint)
     {
@@ -38,9 +36,7 @@ class AllValidator extends ConstraintValidator
         $group = $this->context->getGroup();
 
         foreach ($value as $key => $element) {
-            foreach ($constraint->constraints as $constr) {
-                $this->context->validateValue($element, $constr, '['.$key.']', $group);
-            }
+            $this->context->validateValue($element, $constraint->constraints, '['.$key.']', $group);
         }
     }
 }

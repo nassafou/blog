@@ -15,14 +15,14 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 
 /**
- * Merges extension configs into the container builder
+ * Merges extension configs into the container builder.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
 class MergeExtensionConfigurationPass implements CompilerPassInterface
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function process(ContainerBuilder $container)
     {
@@ -50,10 +50,10 @@ class MergeExtensionConfigurationPass implements CompilerPassInterface
             $extension->load($config, $tmpContainer);
 
             $container->merge($tmpContainer);
+            $container->getParameterBag()->add($parameters);
         }
 
         $container->addDefinitions($definitions);
         $container->addAliases($aliases);
-        $container->getParameterBag()->add($parameters);
     }
 }

@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Symfony\Component\Security\Tests\Domain;
+namespace Symfony\Component\Security\Tests\Acl\Domain;
 
 use Symfony\Component\Security\Acl\Domain\Entry;
 
@@ -36,7 +36,7 @@ class EntryTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($ace->isAuditSuccess());
         $ace->setAuditSuccess(false);
         $this->assertFalse($ace->isAuditSuccess());
-        $ace->setAuditsuccess(true);
+        $ace->setAuditSuccess(true);
         $this->assertTrue($ace->isAuditSuccess());
     }
 

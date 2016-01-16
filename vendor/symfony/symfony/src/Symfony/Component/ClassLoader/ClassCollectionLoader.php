@@ -25,12 +25,12 @@ class ClassCollectionLoader
     /**
      * Loads a list of classes and caches them in one big file.
      *
-     * @param array   $classes    An array of classes to load
-     * @param string  $cacheDir   A cache directory
-     * @param string  $name       The cache name prefix
-     * @param Boolean $autoReload Whether to flush the cache when the cache is stale or not
-     * @param Boolean $adaptive   Whether to remove already declared classes or not
-     * @param string  $extension  File extension of the resulting file
+     * @param array  $classes    An array of classes to load
+     * @param string $cacheDir   A cache directory
+     * @param string $name       The cache name prefix
+     * @param bool   $autoReload Whether to flush the cache when the cache is stale or not
+     * @param bool   $adaptive   Whether to remove already declared classes or not
+     * @param string $extension  File extension of the resulting file
      *
      * @throws \InvalidArgumentException When class can't be loaded
      */
@@ -137,8 +137,8 @@ class ClassCollectionLoader
     public static function fixNamespaceDeclarations($source)
     {
         if (!function_exists('token_get_all') || !self::$useTokenizer) {
-            if (preg_match('/namespace(.*?)\s*;/', $source)) {
-                $source = preg_replace('/namespace(.*?)\s*;/', "namespace$1\n{", $source)."}\n";
+            if (preg_match('/(^|\s)namespace(.*?)\s*;/', $source)) {
+                $source = preg_replace('/(^|\s)namespace(.*?)\s*;/', "$1namespace$2\n{", $source)."}\n";
             }
 
             return $source;
@@ -200,7 +200,7 @@ class ClassCollectionLoader
      */
     public static function enableTokenizer($bool)
     {
-        self::$useTokenizer = (Boolean) $bool;
+        self::$useTokenizer = (bool) $bool;
     }
 
     /**
@@ -283,7 +283,7 @@ class ClassCollectionLoader
 
         $traits = array();
 
-        if (function_exists('get_declared_traits')) {
+        if (method_exists('ReflectionClass', 'getTraits')) {
             foreach ($classes as $c) {
                 foreach (self::resolveDependencies(self::computeTraitDeps($c), $c) as $trait) {
                     if ($trait !== $c) {
@@ -335,10 +335,10 @@ class ClassCollectionLoader
      * This function does not check for circular dependencies as it should never
      * occur with PHP traits.
      *
-     * @param array             $tree       The dependency tree
-     * @param \ReflectionClass  $node       The node
-     * @param \ArrayObject      $resolved   An array of already resolved dependencies
-     * @param \ArrayObject      $unresolved An array of dependencies to be resolved
+     * @param array            $tree       The dependency tree
+     * @param \ReflectionClass $node       The node
+     * @param \ArrayObject     $resolved   An array of already resolved dependencies
+     * @param \ArrayObject     $unresolved An array of dependencies to be resolved
      *
      * @return \ArrayObject The dependencies for the given node
      *
@@ -353,14 +353,17 @@ class ClassCollectionLoader
             $unresolved = new \ArrayObject();
         }
         $nodeName = $node->getName();
-        $unresolved[$nodeName] = $node;
-        foreach ($tree[$nodeName] as $dependency) {
-            if (!$resolved->offsetExists($dependency->getName())) {
-                self::resolveDependencies($tree, $dependency, $resolved, $unresolved);
+
+        if (isset($tree[$nodeName])) {
+            $unresolved[$nodeName] = $node;
+            foreach ($tree[$nodeName] as $dependency) {
+                if (!$resolved->offsetExists($dependency->getName())) {
+                    self::resolveDependencies($tree, $dependency, $resolved, $unresolved);
+                }
             }
+            $resolved[$nodeName] = $node;
+            unset($unresolved[$nodeName]);
         }
-        $resolved[$nodeName] = $node;
-        unset($unresolved[$nodeName]);
 
         return $resolved;
     }

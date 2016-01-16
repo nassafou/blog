@@ -19,7 +19,7 @@ namespace Symfony\Component\PropertyAccess;
 class StringUtil
 {
     /**
-     * Map english plural to singular suffixes
+     * Map english plural to singular suffixes.
      *
      * @var array
      *
@@ -60,17 +60,29 @@ class StringUtil
         // indices (index), appendices (appendix), prices (price)
         array('seci', 4, false, true, array('ex', 'ix', 'ice')),
 
+        // selfies (selfie)
+        array('seifles', 7, true, true, 'selfie'),
+
+        // movies (movie)
+        array('seivom', 6, true, true, 'movie'),
+
         // babies (baby)
         array('sei', 3, false, true, 'y'),
+
+        // accesses (access), addresses (address), kisses (kiss)
+        array('sess', 4, true, false, 'ss'),
 
         // analyses (analysis), ellipses (ellipsis), funguses (fungus),
         // neuroses (neurosis), theses (thesis), emphases (emphasis),
         // oases (oasis), crises (crisis), houses (house), bases (base),
-        // atlases (atlas), kisses (kiss)
+        // atlases (atlas)
         array('ses', 3, true, true, array('s', 'se', 'sis')),
 
         // objectives (objective), alternative (alternatives)
         array('sevit', 5, true, true, 'tive'),
+
+        // drives (drive)
+        array('sevird', 6, false, true, 'drive'),
 
         // lives (life), wives (wife)
         array('sevi', 4, false, true, 'ife'),
@@ -78,8 +90,8 @@ class StringUtil
         // moves (move)
         array('sevom', 5, true, true, 'move'),
 
-        // hooves (hoof), dwarves (dwarf), elves (elf), leaves (leaf)
-        array('sev', 3, true, true, 'f'),
+        // hooves (hoof), dwarves (dwarf), elves (elf), leaves (leaf), caves (cave), staves (staff)
+        array('sev', 3, true, true, array('f', 've', 'ff')),
 
         // axes (axis), axes (ax), axes (axe)
         array('sexa', 4, false, false, array('ax', 'axe', 'axis')),
@@ -106,17 +118,20 @@ class StringUtil
     );
 
     /**
-     * This class should not be instantiated
+     * This class should not be instantiated.
      */
-    private function __construct() {}
+    private function __construct()
+    {
+    }
 
     /**
-     * Returns the singular form of a word
+     * Returns the singular form of a word.
      *
      * If the method can't determine the form with certainty, an array of the
      * possible singulars is returned.
      *
      * @param string $plural A word in plural form
+     *
      * @return string|array The singular form or an array of possible singular
      *                      forms
      */
@@ -177,7 +192,7 @@ class StringUtil
                         return $singulars;
                     }
 
-                    return $newBase.($firstUpper ? ucFirst($newSuffix) : $newSuffix);
+                    return $newBase.($firstUpper ? ucfirst($newSuffix) : $newSuffix);
                 }
 
                 // Suffix is longer than word
@@ -188,7 +203,7 @@ class StringUtil
         }
 
         // Convert teeth to tooth, feet to foot
-        if (false !== ($pos = strpos($plural, 'ee'))) {
+        if (false !== ($pos = strpos($plural, 'ee')) && strlen($plural) > 3 && 'feedback' !== $plural) {
             return substr_replace($plural, 'oo', $pos, 2);
         }
 

@@ -15,10 +15,9 @@ use Symfony\Component\Validator\Constraint;
 
 /**
  * @Annotation
+ * @Target({"PROPERTY", "METHOD", "ANNOTATION"})
  *
  * @author Miha Vrhovnik <miha.vrhovnik@pagein.si>
- *
- * @api
  */
 class Currency extends Constraint
 {

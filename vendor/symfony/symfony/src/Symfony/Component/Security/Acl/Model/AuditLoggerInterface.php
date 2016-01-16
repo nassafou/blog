@@ -12,7 +12,7 @@
 namespace Symfony\Component\Security\Acl\Model;
 
 /**
- * Interface for audit loggers
+ * Interface for audit loggers.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
@@ -22,7 +22,7 @@ interface AuditLoggerInterface
      * This method is called whenever access is granted, or denied, and
      * administrative mode is turned off.
      *
-     * @param Boolean        $granted
+     * @param bool           $granted
      * @param EntryInterface $ace
      */
     public function logIfNeeded($granted, EntryInterface $ace);

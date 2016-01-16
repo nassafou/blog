@@ -11,25 +11,9 @@
 
 namespace Symfony\Component\Validator\Constraints;
 
-use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\ConstraintValidator;
-
 /**
  * @author Bernhard Schussek <bschussek@gmail.com>
- *
- * @api
  */
-class FalseValidator extends ConstraintValidator
+class FalseValidator extends IsFalseValidator
 {
-    /**
-     * {@inheritDoc}
-     */
-    public function validate($value, Constraint $constraint)
-    {
-        if (null === $value || false === $value || 0 === $value || '0' === $value) {
-            return;
-        }
-
-        $this->context->addViolation($constraint->message);
-    }
 }

@@ -41,7 +41,7 @@ Form
 
    Before:
 
-   ```
+   ```php
    use Symfony\Component\Form\DataMapperInterface;
 
    class MyDataMapper
@@ -60,7 +60,7 @@ Form
 
    After:
 
-   ```
+   ```php
    use Symfony\Component\Form\DataMapperInterface;
 
    class MyDataMapper
@@ -84,7 +84,7 @@ Form
 
    Before:
 
-   ```
+   ```php
    use Symfony\Component\Form\Util\VirtualFormAwareIterator;
 
    public function mapFormsToData(array $forms, $data)
@@ -101,7 +101,7 @@ Form
 
    After:
 
-   ```
+   ```php
    public function mapFormsToData($forms, $data)
    {
        foreach ($forms as $form) {
@@ -110,9 +110,9 @@ Form
    }
    ```
 
- * The *_SET_DATA events are now guaranteed to be fired *after* the children
+ * The `*_SET_DATA` events are now guaranteed to be fired *after* the children
    were added by the FormBuilder (unless setData() is called manually). Before,
-   the *_SET_DATA events were sometimes thrown before adding child forms,
+   the `*_SET_DATA` events were sometimes thrown before adding child forms,
    which made it impossible to remove child forms dynamically.
 
    A consequence of this change is that you need to set the "auto_initialize"
@@ -121,7 +121,7 @@ Form
 
    Before:
 
-   ```
+   ```php
    $form = $factory->create('form');
    $form->add($factory->createNamed('field', 'text'));
    ```
@@ -135,9 +135,9 @@ Form
 
    After (Alternative 1):
 
-   ```
+   ```php
    $form = $factory->create('form');
-   $form->add($factory->createNamed('field', 'text', array(
+   $form->add($factory->createNamed('field', 'text', array(), array(
        'auto_initialize' => false,
    )));
    ```
@@ -147,7 +147,7 @@ Form
 
    After (Alternative 2):
 
-   ```
+   ```php
    $builder = $factory->createBuilder('form');
    $builder->add($factory->createBuilder('field', 'text'));
    $form = $builder->getForm();
@@ -157,17 +157,43 @@ Form
 
    After (Alternative 3):
 
-   ```
+   ```php
    $form = $factory->create('form');
    $form->add('field', 'text');
    ```
 
    After (Alternative 4):
 
-   ```
+   ```php
    $builder = $factory->createBuilder('form');
    $builder->add('field', 'text');
    $form = $builder->getForm();
+   ```
+
+ * Previously, when the "data" option of a field was set to `null` and the
+   containing form was mapped to an object, the field would receive the data
+   from the object as default value. This functionality was unintended and fixed
+   to use `null` as default value in Symfony 2.3.
+
+   In cases where you made use of the previous behavior, you should now remove
+   the "data" option altogether.
+
+   Before:
+
+   ```php
+   $builder->add('field', 'text', array(
+      'data' => $defaultData ?: null,
+   ));
+   ```
+
+   After:
+
+   ```php
+   $options = array();
+   if ($defaultData) {
+       $options['data'] = $defaultData;
+   }
+   $builder->add('field', 'text', $options);
    ```
 
 PropertyAccess
@@ -177,7 +203,7 @@ PropertyAccess
    even if a non-public match was found. This means that the property "author"
    in the following class will now correctly be found:
 
-   ```
+   ```php
    class Article
    {
        public $author;
@@ -198,7 +224,7 @@ PropertyAccess
 
    Before:
 
-   ```
+   ```php
    use Symfony\Component\PropertyAccess\Exception\PropertyAccessDeniedException;
    use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 
@@ -213,7 +239,7 @@ PropertyAccess
 
    After:
 
-   ```
+   ```php
    use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 
    try {
@@ -231,7 +257,7 @@ DomCrawler
 
    Before:
 
-   ```
+   ```php
    $data = $crawler->each(function ($node, $i) {
        return $node->nodeValue;
    });
@@ -239,7 +265,7 @@ DomCrawler
 
    After:
 
-   ```
+   ```php
    $data = $crawler->each(function ($crawler, $i) {
        return $crawler->text();
    });
@@ -254,13 +280,13 @@ Console
 
    Before:
 
-   ```
+   ```php
    if (OutputInterface::VERBOSITY_VERBOSE === $output->getVerbosity()) { ... }
    ```
 
    After:
 
-   ```
+   ```php
    if (OutputInterface::VERBOSITY_VERBOSE <= $output->getVerbosity()) { ... }
    ```
 

@@ -20,14 +20,11 @@ require_once __DIR__.'/Fixtures/ClassesWithParents/A.php';
 
 class ClassCollectionLoaderTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @requires PHP 5.4
+     */
     public function testTraitDependencies()
     {
-        if (version_compare(phpversion(), '5.4', '<')) {
-            $this->markTestSkipped('Requires PHP > 5.4');
-
-            return;
-        }
-
         require_once __DIR__.'/Fixtures/deps/traits.php';
 
         $r = new \ReflectionClass('Symfony\Component\ClassLoader\ClassCollectionLoader');
@@ -97,15 +94,10 @@ class ClassCollectionLoaderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider getDifferentOrdersForTraits
+     * @requires PHP 5.4
      */
     public function testClassWithTraitsReordering(array $classes)
     {
-        if (version_compare(phpversion(), '5.4', '<')) {
-            $this->markTestSkipped('Requires PHP > 5.4');
-
-            return;
-        }
-
         require_once __DIR__.'/Fixtures/ClassesWithParents/ATrait.php';
         require_once __DIR__.'/Fixtures/ClassesWithParents/BTrait.php';
         require_once __DIR__.'/Fixtures/ClassesWithParents/CTrait.php';
@@ -147,6 +139,35 @@ class ClassCollectionLoaderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @requires PHP 5.4
+     */
+    public function testFixClassWithTraitsOrdering()
+    {
+        require_once __DIR__.'/Fixtures/ClassesWithParents/CTrait.php';
+        require_once __DIR__.'/Fixtures/ClassesWithParents/F.php';
+        require_once __DIR__.'/Fixtures/ClassesWithParents/G.php';
+
+        $classes = array(
+            'ClassesWithParents\\F',
+            'ClassesWithParents\\G',
+        );
+
+        $expected = array(
+            'ClassesWithParents\\CTrait',
+            'ClassesWithParents\\F',
+            'ClassesWithParents\\G',
+        );
+
+        $r = new \ReflectionClass('Symfony\Component\ClassLoader\ClassCollectionLoader');
+        $m = $r->getMethod('getOrderedClasses');
+        $m->setAccessible(true);
+
+        $ordered = $m->invoke('Symfony\Component\ClassLoader\ClassCollectionLoader', $classes);
+
+        $this->assertEquals($expected, array_map(function ($class) { return $class->getName(); }, $ordered));
+    }
+
+    /**
      * @dataProvider getFixNamespaceDeclarationsData
      */
     public function testFixNamespaceDeclarations($source, $expected)
@@ -184,12 +205,12 @@ class ClassCollectionLoaderTest extends \PHPUnit_Framework_TestCase
             array("namespace   Bar ;\nclass Foo {}\n", "namespace   Bar\n{\nclass Foo {}\n}\n"),
             array("namespace Foo\Bar;\nclass Foo {}\n", "namespace Foo\Bar\n{\nclass Foo {}\n}\n"),
             array("namespace Foo\Bar\Bar\n{\nclass Foo {}\n}\n", "namespace Foo\Bar\Bar\n{\nclass Foo {}\n}\n"),
-            array("namespace\n{\nclass Foo {}\n}\n", "namespace\n{\nclass Foo {}\n}\n"),
+            array("\nnamespace\n{\nclass Foo {}\n\$namespace=123;}\n", "\nnamespace\n{\nclass Foo {}\n\$namespace=123;}\n"),
         );
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      */
     public function testUnableToLoadClassException()
     {
@@ -227,7 +248,7 @@ class WithComments
 {
 public static \$loaded = true;
 }
-\$string ='string shoult not be   modified {\$string}';
+\$string ='string should not be   modified {\$string}';
 \$heredoc = (<<<HD
 
 

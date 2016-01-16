@@ -36,7 +36,7 @@ class LogoutListener implements ListenerInterface
     private $csrfProvider;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param SecurityContextInterface      $securityContext
      * @param HttpUtils                     $httpUtils       An HttpUtilsInterface instance
@@ -50,8 +50,8 @@ class LogoutListener implements ListenerInterface
         $this->httpUtils = $httpUtils;
         $this->options = array_merge(array(
             'csrf_parameter' => '_csrf_token',
-            'intention'      => 'logout',
-            'logout_path'    => '/logout',
+            'intention' => 'logout',
+            'logout_path' => '/logout',
         ), $options);
         $this->successHandler = $successHandler;
         $this->csrfProvider = $csrfProvider;
@@ -59,7 +59,7 @@ class LogoutListener implements ListenerInterface
     }
 
     /**
-     * Adds a logout handler
+     * Adds a logout handler.
      *
      * @param LogoutHandlerInterface $handler
      */
@@ -69,16 +69,15 @@ class LogoutListener implements ListenerInterface
     }
 
     /**
-     * Performs the logout if requested
+     * Performs the logout if requested.
      *
      * If a CsrfProviderInterface instance is available, it will be used to
      * validate the request.
      *
      * @param GetResponseEvent $event A GetResponseEvent instance
      *
-     * @throws InvalidCsrfTokenException if the CSRF token is invalid
+     * @throws LogoutException   if the CSRF token is invalid
      * @throws \RuntimeException if the LogoutSuccessHandlerInterface instance does not return a response
-     * @throws LogoutException
      */
     public function handle(GetResponseEvent $event)
     {
@@ -122,7 +121,7 @@ class LogoutListener implements ListenerInterface
      *
      * @param Request $request
      *
-     * @return Boolean
+     * @return bool
      */
     protected function requiresLogout(Request $request)
     {

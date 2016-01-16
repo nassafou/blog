@@ -1,0 +1,16 @@
+{% extends '::base.html.twig' %}
+
+  {% block title %}
+      Blog -{{ parent() }}
+  {% endblock %}
+
+  {% block body %}
+      {#  On defini un nouveau sous-titre commun a toutes les pages du bundle #}
+      <h1>Blog1</h1>
+      
+      <hr>
+      {# On definit le nouveau bloc, que les vues du bundle pourront remplir #}
+        {% block blog_body %}
+        {% endblock %}
+
+  {% endblock %}

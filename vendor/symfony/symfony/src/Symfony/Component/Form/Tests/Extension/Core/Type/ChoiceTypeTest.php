@@ -43,7 +43,7 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
         'Doctrine' => array(
             'd' => 'Jon',
             'e' => 'Roman',
-        )
+        ),
     );
 
     protected function setUp()
@@ -67,16 +67,6 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
     }
 
     /**
-     * @expectedException \PHPUnit_Framework_Error
-     */
-    public function testChoicesOptionExpectsArray()
-    {
-        $this->factory->create('choice', null, array(
-            'choices' => new \ArrayObject(),
-        ));
-    }
-
-    /**
      * @expectedException \Symfony\Component\OptionsResolver\Exception\InvalidOptionsException
      */
     public function testChoiceListOptionExpectsChoiceListInterface()
@@ -94,8 +84,8 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
     public function testExpandedChoicesOptionsTurnIntoChildren()
     {
         $form = $this->factory->create('choice', null, array(
-            'expanded'  => true,
-            'choices'   => $this->choices,
+            'expanded' => true,
+            'choices' => $this->choices,
         ));
 
         $this->assertCount(count($this->choices), $form, 'Each choice should become a new field');
@@ -104,10 +94,10 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
     public function testPlaceholderPresentOnNonRequiredExpandedSingleChoice()
     {
         $form = $this->factory->create('choice', null, array(
-            'multiple'  => false,
-            'expanded'  => true,
-            'required'  => false,
-            'choices'   => $this->choices,
+            'multiple' => false,
+            'expanded' => true,
+            'required' => false,
+            'choices' => $this->choices,
         ));
 
         $this->assertTrue(isset($form['placeholder']));
@@ -117,10 +107,10 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
     public function testPlaceholderNotPresentIfRequired()
     {
         $form = $this->factory->create('choice', null, array(
-            'multiple'  => false,
-            'expanded'  => true,
-            'required'  => true,
-            'choices'   => $this->choices,
+            'multiple' => false,
+            'expanded' => true,
+            'required' => true,
+            'choices' => $this->choices,
         ));
 
         $this->assertFalse(isset($form['placeholder']));
@@ -130,10 +120,10 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
     public function testPlaceholderNotPresentIfMultiple()
     {
         $form = $this->factory->create('choice', null, array(
-            'multiple'  => true,
-            'expanded'  => true,
-            'required'  => false,
-            'choices'   => $this->choices,
+            'multiple' => true,
+            'expanded' => true,
+            'required' => false,
+            'choices' => $this->choices,
         ));
 
         $this->assertFalse(isset($form['placeholder']));
@@ -143,9 +133,9 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
     public function testPlaceholderNotPresentIfEmptyChoice()
     {
         $form = $this->factory->create('choice', null, array(
-            'multiple'  => false,
-            'expanded'  => true,
-            'required'  => false,
+            'multiple' => false,
+            'expanded' => true,
+            'required' => false,
             'choices' => array(
                 '' => 'Empty',
                 1 => 'Not empty',
@@ -159,8 +149,8 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
     public function testExpandedChoicesOptionsAreFlattened()
     {
         $form = $this->factory->create('choice', null, array(
-            'expanded'  => true,
-            'choices'   => $this->groupedChoices,
+            'expanded' => true,
+            'choices' => $this->groupedChoices,
         ));
 
         $flattened = array();
@@ -231,6 +221,21 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
         $this->assertEquals('b', $form->getViewData());
     }
 
+    public function testSubmitSingleNonExpandedInvalidChoice()
+    {
+        $form = $this->factory->create('choice', null, array(
+            'multiple' => false,
+            'expanded' => false,
+            'choices' => $this->choices,
+        ));
+
+        $form->submit('foobar');
+
+        $this->assertNull($form->getData());
+        $this->assertEquals('foobar', $form->getViewData());
+        $this->assertFalse($form->isSynchronized());
+    }
+
     public function testSubmitSingleNonExpandedObjectChoices()
     {
         $form = $this->factory->create('choice', null, array(
@@ -266,6 +271,36 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
 
         $this->assertEquals(array('a', 'b'), $form->getData());
         $this->assertEquals(array('a', 'b'), $form->getViewData());
+    }
+
+    public function testSubmitMultipleNonExpandedInvalidScalarChoice()
+    {
+        $form = $this->factory->create('choice', null, array(
+            'multiple' => true,
+            'expanded' => false,
+            'choices' => $this->choices,
+        ));
+
+        $form->submit('foobar');
+
+        $this->assertNull($form->getData());
+        $this->assertEquals('foobar', $form->getViewData());
+        $this->assertFalse($form->isSynchronized());
+    }
+
+    public function testSubmitMultipleNonExpandedInvalidArrayChoice()
+    {
+        $form = $this->factory->create('choice', null, array(
+            'multiple' => true,
+            'expanded' => false,
+            'choices' => $this->choices,
+        ));
+
+        $form->submit(array('a', 'foobar'));
+
+        $this->assertNull($form->getData());
+        $this->assertEquals(array('a', 'foobar'), $form->getViewData());
+        $this->assertFalse($form->isSynchronized());
     }
 
     public function testSubmitMultipleNonExpandedObjectChoices()
@@ -309,6 +344,8 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
             3 => false,
             4 => false,
         ), $form->getViewData());
+        $this->assertEmpty($form->getExtraData());
+        $this->assertTrue($form->isSynchronized());
 
         $this->assertFalse($form[0]->getData());
         $this->assertTrue($form[1]->getData());
@@ -317,6 +354,34 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
         $this->assertFalse($form[4]->getData());
         $this->assertNull($form[0]->getViewData());
         $this->assertSame('b', $form[1]->getViewData());
+        $this->assertNull($form[2]->getViewData());
+        $this->assertNull($form[3]->getViewData());
+        $this->assertNull($form[4]->getViewData());
+    }
+
+    public function testSubmitSingleExpandedRequiredInvalidChoice()
+    {
+        $form = $this->factory->create('choice', null, array(
+            'multiple' => false,
+            'expanded' => true,
+            'required' => true,
+            'choices' => $this->choices,
+        ));
+
+        $form->submit('foobar');
+
+        $this->assertNull($form->getData());
+        $this->assertSame('foobar', $form->getViewData());
+        $this->assertEmpty($form->getExtraData());
+        $this->assertFalse($form->isSynchronized());
+
+        $this->assertFalse($form[0]->getData());
+        $this->assertFalse($form[1]->getData());
+        $this->assertFalse($form[2]->getData());
+        $this->assertFalse($form[3]->getData());
+        $this->assertFalse($form[4]->getData());
+        $this->assertNull($form[0]->getViewData());
+        $this->assertNull($form[1]->getViewData());
         $this->assertNull($form[2]->getViewData());
         $this->assertNull($form[3]->getViewData());
         $this->assertNull($form[4]->getViewData());
@@ -342,6 +407,8 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
             4 => false,
             'placeholder' => false,
         ), $form->getViewData());
+        $this->assertEmpty($form->getExtraData());
+        $this->assertTrue($form->isSynchronized());
 
         $this->assertFalse($form['placeholder']->getData());
         $this->assertFalse($form[0]->getData());
@@ -357,7 +424,35 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
         $this->assertNull($form[4]->getViewData());
     }
 
-    public function testSubmitSingleExpandedRequiredNothingChecked()
+    public function testSubmitSingleExpandedNonRequiredInvalidChoice()
+    {
+        $form = $this->factory->create('choice', null, array(
+            'multiple' => false,
+            'expanded' => true,
+            'required' => false,
+            'choices' => $this->choices,
+        ));
+
+        $form->submit('foobar');
+
+        $this->assertNull($form->getData());
+        $this->assertSame('foobar', $form->getViewData());
+        $this->assertEmpty($form->getExtraData());
+        $this->assertFalse($form->isSynchronized());
+
+        $this->assertFalse($form[0]->getData());
+        $this->assertFalse($form[1]->getData());
+        $this->assertFalse($form[2]->getData());
+        $this->assertFalse($form[3]->getData());
+        $this->assertFalse($form[4]->getData());
+        $this->assertNull($form[0]->getViewData());
+        $this->assertNull($form[1]->getViewData());
+        $this->assertNull($form[2]->getViewData());
+        $this->assertNull($form[3]->getViewData());
+        $this->assertNull($form[4]->getViewData());
+    }
+
+    public function testSubmitSingleExpandedRequiredNull()
     {
         $form = $this->factory->create('choice', null, array(
             'multiple' => false,
@@ -376,6 +471,8 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
             3 => false,
             4 => false,
         ), $form->getViewData());
+        $this->assertEmpty($form->getExtraData());
+        $this->assertTrue($form->isSynchronized());
 
         $this->assertFalse($form[0]->getData());
         $this->assertFalse($form[1]->getData());
@@ -389,7 +486,75 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
         $this->assertNull($form[4]->getViewData());
     }
 
-    public function testSubmitSingleExpandedNonRequiredNothingChecked()
+    public function testSubmitSingleExpandedRequiredEmpty()
+    {
+        $form = $this->factory->create('choice', null, array(
+            'multiple' => false,
+            'expanded' => true,
+            'required' => true,
+            'choices' => $this->choices,
+        ));
+
+        $form->submit('');
+
+        $this->assertNull($form->getData());
+        $this->assertSame(array(
+            0 => false,
+            1 => false,
+            2 => false,
+            3 => false,
+            4 => false,
+        ), $form->getViewData());
+        $this->assertEmpty($form->getExtraData());
+        $this->assertTrue($form->isSynchronized());
+
+        $this->assertFalse($form[0]->getData());
+        $this->assertFalse($form[1]->getData());
+        $this->assertFalse($form[2]->getData());
+        $this->assertFalse($form[3]->getData());
+        $this->assertFalse($form[4]->getData());
+        $this->assertNull($form[0]->getViewData());
+        $this->assertNull($form[1]->getViewData());
+        $this->assertNull($form[2]->getViewData());
+        $this->assertNull($form[3]->getViewData());
+        $this->assertNull($form[4]->getViewData());
+    }
+
+    public function testSubmitSingleExpandedRequiredFalse()
+    {
+        $form = $this->factory->create('choice', null, array(
+            'multiple' => false,
+            'expanded' => true,
+            'required' => true,
+            'choices' => $this->choices,
+        ));
+
+        $form->submit(false);
+
+        $this->assertNull($form->getData());
+        $this->assertSame(array(
+            0 => false,
+            1 => false,
+            2 => false,
+            3 => false,
+            4 => false,
+        ), $form->getViewData());
+        $this->assertEmpty($form->getExtraData());
+        $this->assertTrue($form->isSynchronized());
+
+        $this->assertFalse($form[0]->getData());
+        $this->assertFalse($form[1]->getData());
+        $this->assertFalse($form[2]->getData());
+        $this->assertFalse($form[3]->getData());
+        $this->assertFalse($form[4]->getData());
+        $this->assertNull($form[0]->getViewData());
+        $this->assertNull($form[1]->getViewData());
+        $this->assertNull($form[2]->getViewData());
+        $this->assertNull($form[3]->getViewData());
+        $this->assertNull($form[4]->getViewData());
+    }
+
+    public function testSubmitSingleExpandedNonRequiredNull()
     {
         $form = $this->factory->create('choice', null, array(
             'multiple' => false,
@@ -409,6 +574,8 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
             4 => false,
             'placeholder' => true,
         ), $form->getViewData());
+        $this->assertEmpty($form->getExtraData());
+        $this->assertTrue($form->isSynchronized());
 
         $this->assertTrue($form['placeholder']->getData());
         $this->assertFalse($form[0]->getData());
@@ -424,22 +591,44 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
         $this->assertNull($form[4]->getViewData());
     }
 
-    public function testSubmitFalseToSingleExpandedRequiredDoesNotProduceExtraChildrenError()
+    public function testSubmitSingleExpandedNonRequiredEmpty()
     {
         $form = $this->factory->create('choice', null, array(
             'multiple' => false,
             'expanded' => true,
-            'required' => true,
+            'required' => false,
             'choices' => $this->choices,
         ));
 
-        $form->submit(false);
+        $form->submit('');
 
-        $this->assertEmpty($form->getExtraData());
         $this->assertNull($form->getData());
+        $this->assertSame(array(
+            0 => false,
+            1 => false,
+            2 => false,
+            3 => false,
+            4 => false,
+            'placeholder' => true,
+        ), $form->getViewData());
+        $this->assertEmpty($form->getExtraData());
+        $this->assertTrue($form->isSynchronized());
+
+        $this->assertTrue($form['placeholder']->getData());
+        $this->assertFalse($form[0]->getData());
+        $this->assertFalse($form[1]->getData());
+        $this->assertFalse($form[2]->getData());
+        $this->assertFalse($form[3]->getData());
+        $this->assertFalse($form[4]->getData());
+        $this->assertSame('', $form['placeholder']->getViewData());
+        $this->assertNull($form[0]->getViewData());
+        $this->assertNull($form[1]->getViewData());
+        $this->assertNull($form[2]->getViewData());
+        $this->assertNull($form[3]->getViewData());
+        $this->assertNull($form[4]->getViewData());
     }
 
-    public function testSubmitFalseToSingleExpandedNonRequiredDoesNotProduceExtraChildrenError()
+    public function testSubmitSingleExpandedNonRequiredFalse()
     {
         $form = $this->factory->create('choice', null, array(
             'multiple' => false,
@@ -450,8 +639,30 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
 
         $form->submit(false);
 
-        $this->assertEmpty($form->getExtraData());
         $this->assertNull($form->getData());
+        $this->assertSame(array(
+            0 => false,
+            1 => false,
+            2 => false,
+            3 => false,
+            4 => false,
+            'placeholder' => true,
+        ), $form->getViewData());
+        $this->assertEmpty($form->getExtraData());
+        $this->assertTrue($form->isSynchronized());
+
+        $this->assertTrue($form['placeholder']->getData());
+        $this->assertFalse($form[0]->getData());
+        $this->assertFalse($form[1]->getData());
+        $this->assertFalse($form[2]->getData());
+        $this->assertFalse($form[3]->getData());
+        $this->assertFalse($form[4]->getData());
+        $this->assertSame('', $form['placeholder']->getViewData());
+        $this->assertNull($form[0]->getViewData());
+        $this->assertNull($form[1]->getViewData());
+        $this->assertNull($form[2]->getViewData());
+        $this->assertNull($form[3]->getViewData());
+        $this->assertNull($form[4]->getViewData());
     }
 
     public function testSubmitSingleExpandedWithEmptyChild()
@@ -539,6 +750,16 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
         $form->submit(array('a', 'c'));
 
         $this->assertSame(array('a', 'c'), $form->getData());
+        $this->assertSame(array(
+            0 => true,
+            1 => false,
+            2 => true,
+            3 => false,
+            4 => false,
+        ), $form->getViewData());
+        $this->assertEmpty($form->getExtraData());
+        $this->assertTrue($form->isSynchronized());
+
         $this->assertTrue($form[0]->getData());
         $this->assertFalse($form[1]->getData());
         $this->assertTrue($form[2]->getData());
@@ -547,6 +768,60 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
         $this->assertSame('a', $form[0]->getViewData());
         $this->assertNull($form[1]->getViewData());
         $this->assertSame('c', $form[2]->getViewData());
+        $this->assertNull($form[3]->getViewData());
+        $this->assertNull($form[4]->getViewData());
+    }
+
+    public function testSubmitMultipleExpandedInvalidScalarChoice()
+    {
+        $form = $this->factory->create('choice', null, array(
+            'multiple' => true,
+            'expanded' => true,
+            'choices' => $this->choices,
+        ));
+
+        $form->submit('foobar');
+
+        $this->assertNull($form->getData());
+        $this->assertSame('foobar', $form->getViewData());
+        $this->assertEmpty($form->getExtraData());
+        $this->assertFalse($form->isSynchronized());
+
+        $this->assertFalse($form[0]->getData());
+        $this->assertFalse($form[1]->getData());
+        $this->assertFalse($form[2]->getData());
+        $this->assertFalse($form[3]->getData());
+        $this->assertFalse($form[4]->getData());
+        $this->assertNull($form[0]->getViewData());
+        $this->assertNull($form[1]->getViewData());
+        $this->assertNull($form[2]->getViewData());
+        $this->assertNull($form[3]->getViewData());
+        $this->assertNull($form[4]->getViewData());
+    }
+
+    public function testSubmitMultipleExpandedInvalidArrayChoice()
+    {
+        $form = $this->factory->create('choice', null, array(
+            'multiple' => true,
+            'expanded' => true,
+            'choices' => $this->choices,
+        ));
+
+        $form->submit(array('a', 'foobar'));
+
+        $this->assertNull($form->getData());
+        $this->assertSame(array('a', 'foobar'), $form->getViewData());
+        $this->assertEmpty($form->getExtraData());
+        $this->assertFalse($form->isSynchronized());
+
+        $this->assertFalse($form[0]->getData());
+        $this->assertFalse($form[1]->getData());
+        $this->assertFalse($form[2]->getData());
+        $this->assertFalse($form[3]->getData());
+        $this->assertFalse($form[4]->getData());
+        $this->assertNull($form[0]->getViewData());
+        $this->assertNull($form[1]->getViewData());
+        $this->assertNull($form[2]->getViewData());
         $this->assertNull($form[3]->getViewData());
         $this->assertNull($form[4]->getViewData());
     }
@@ -583,7 +858,7 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
                 '' => 'Empty',
                 1 => 'Not Empty',
                 2 => 'Not Empty 2',
-            )
+            ),
         ));
 
         $form->submit(array('', '2'));
@@ -765,6 +1040,7 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
         $view = $form->createView();
 
         $this->assertEquals($viewValue, $view->vars['empty_value']);
+        $this->assertFalse($view->vars['empty_value_in_choices']);
     }
 
     /**
@@ -782,6 +1058,7 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
         $view = $form->createView();
 
         $this->assertNull($view->vars['empty_value']);
+        $this->assertTrue($view->vars['empty_value_in_choices']);
     }
 
     public function getOptionsWithEmptyValue()
@@ -927,6 +1204,47 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
         $this->factory->createNamed('name', 'choice', null, array(
             'choices' => array(),
         ));
+    }
+
+    // https://github.com/symfony/symfony/issues/10409
+    public function testReuseNonUtf8ChoiceLists()
+    {
+        $form1 = $this->factory->createNamed('name', 'choice', null, array(
+            'choices' => array(
+                'meter' => 'm',
+                'millimeter' => 'mm',
+                'micrometer' => chr(181).'meter',
+            ),
+        ));
+
+        $form2 = $this->factory->createNamed('name', 'choice', null, array(
+            'choices' => array(
+                'meter' => 'm',
+                'millimeter' => 'mm',
+                'micrometer' => chr(181).'meter',
+            ),
+        ));
+
+        $form3 = $this->factory->createNamed('name', 'choice', null, array(
+            'choices' => array(
+                'meter' => 'm',
+                'millimeter' => 'mm',
+                'micrometer' => null,
+            ),
+        ));
+
+        // $form1 and $form2 use the same ChoiceList
+        $this->assertSame(
+            $form1->getConfig()->getOption('choice_list'),
+            $form2->getConfig()->getOption('choice_list')
+        );
+
+        // $form3 doesn't, but used to use the same when using json_encode()
+        // instead of serialize for the hashing algorithm
+        $this->assertNotSame(
+            $form1->getConfig()->getOption('choice_list'),
+            $form3->getConfig()->getOption('choice_list')
+        );
     }
 
     public function testInitializeWithDefaultObjectChoice()

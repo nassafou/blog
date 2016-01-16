@@ -21,13 +21,13 @@ interface FormInterface extends \ArrayAccess, \Traversable, \Countable
     /**
      * Sets the parent form.
      *
-     * @param  FormInterface|null $parent The parent form or null if it's the root.
+     * @param FormInterface|null $parent The parent form or null if it's the root.
      *
      * @return FormInterface The form instance
      *
      * @throws Exception\AlreadySubmittedException If the form has already been submitted.
-     * @throws Exception\LogicException        When trying to set a parent for a form with
-     *                                         an empty name.
+     * @throws Exception\LogicException            When trying to set a parent for a form with
+     *                                             an empty name.
      */
     public function setParent(FormInterface $parent = null);
 
@@ -39,17 +39,17 @@ interface FormInterface extends \ArrayAccess, \Traversable, \Countable
     public function getParent();
 
     /**
-     * Adds a child to the form.
+     * Adds or replaces a child to the form.
      *
-     * @param FormInterface|string|integer $child   The FormInterface instance or the name of the child.
-     * @param string|null                  $type    The child's type, if a name was passed.
-     * @param array                        $options The child's options, if a name was passed.
+     * @param FormInterface|string|int $child   The FormInterface instance or the name of the child.
+     * @param string|null              $type    The child's type, if a name was passed.
+     * @param array                    $options The child's options, if a name was passed.
      *
      * @return FormInterface The form instance
      *
-     * @throws Exception\AlreadySubmittedException   If the form has already been submitted.
-     * @throws Exception\LogicException          When trying to add a child to a non-compound form.
-     * @throws Exception\UnexpectedTypeException If $child or $type has an unexpected type.
+     * @throws Exception\AlreadySubmittedException If the form has already been submitted.
+     * @throws Exception\LogicException            When trying to add a child to a non-compound form.
+     * @throws Exception\UnexpectedTypeException   If $child or $type has an unexpected type.
      */
     public function add($child, $type = null, array $options = array());
 
@@ -69,14 +69,14 @@ interface FormInterface extends \ArrayAccess, \Traversable, \Countable
      *
      * @param string $name The name of the child
      *
-     * @return Boolean
+     * @return bool
      */
     public function has($name);
 
     /**
      * Removes a child from the form.
      *
-     * @param  string $name The name of the child to remove
+     * @param string $name The name of the child to remove
      *
      * @return FormInterface The form instance
      *
@@ -101,14 +101,14 @@ interface FormInterface extends \ArrayAccess, \Traversable, \Countable
     /**
      * Updates the form with default data.
      *
-     * @param  mixed $modelData The data formatted as expected for the underlying object
+     * @param mixed $modelData The data formatted as expected for the underlying object
      *
      * @return FormInterface The form instance
      *
      * @throws Exception\AlreadySubmittedException If the form has already been submitted.
-     * @throws Exception\LogicException        If listeners try to call setData in a cycle. Or if
-     *                                         the view data does not match the expected type
-     *                                         according to {@link FormConfigInterface::getDataClass}.
+     * @throws Exception\LogicException            If listeners try to call setData in a cycle. Or if
+     *                                             the view data does not match the expected type
+     *                                             according to {@link FormConfigInterface::getDataClass}.
      */
     public function setData($modelData);
 
@@ -152,7 +152,7 @@ interface FormInterface extends \ArrayAccess, \Traversable, \Countable
     /**
      * Returns whether the form is submitted.
      *
-     * @return Boolean true if the form is submitted, false otherwise
+     * @return bool true if the form is submitted, false otherwise
      */
     public function isSubmitted();
 
@@ -173,7 +173,7 @@ interface FormInterface extends \ArrayAccess, \Traversable, \Countable
     /**
      * Adds an error to this form.
      *
-     * @param  FormError $error
+     * @param FormError $error
      *
      * @return FormInterface The form instance
      */
@@ -184,7 +184,7 @@ interface FormInterface extends \ArrayAccess, \Traversable, \Countable
      *
      * If the form is not submitted, this method always returns false.
      *
-     * @return Boolean
+     * @return bool
      */
     public function isValid();
 
@@ -195,7 +195,7 @@ interface FormInterface extends \ArrayAccess, \Traversable, \Countable
      * will always return false. Otherwise the value set with setRequired()
      * is returned.
      *
-     * @return Boolean
+     * @return bool
      */
     public function isRequired();
 
@@ -208,21 +208,21 @@ interface FormInterface extends \ArrayAccess, \Traversable, \Countable
      * Forms whose parents are disabled are considered disabled regardless of
      * their own state.
      *
-     * @return Boolean
+     * @return bool
      */
     public function isDisabled();
 
     /**
      * Returns whether the form is empty.
      *
-     * @return Boolean
+     * @return bool
      */
     public function isEmpty();
 
     /**
      * Returns whether the data in the different formats is synchronized.
      *
-     * @return Boolean
+     * @return bool
      */
     public function isSynchronized();
 
@@ -253,7 +253,7 @@ interface FormInterface extends \ArrayAccess, \Traversable, \Countable
      * Submits data to the form, transforms and validates it.
      *
      * @param null|string|array $submittedData The submitted data.
-     * @param Boolean           $clearMissing  Whether to set fields to NULL
+     * @param bool              $clearMissing  Whether to set fields to NULL
      *                                         when they are missing in the
      *                                         submitted data.
      *
@@ -273,7 +273,7 @@ interface FormInterface extends \ArrayAccess, \Traversable, \Countable
     /**
      * Returns whether the field is the root of the form tree.
      *
-     * @return Boolean
+     * @return bool
      */
     public function isRoot();
 

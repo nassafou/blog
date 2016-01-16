@@ -34,14 +34,16 @@ class ResizeFormListener implements EventSubscriberInterface
     protected $options;
 
     /**
-     * Whether children could be added to the group
-     * @var Boolean
+     * Whether children could be added to the group.
+     *
+     * @var bool
      */
     protected $allowAdd;
 
     /**
-     * Whether children could be removed from the group
-     * @var Boolean
+     * Whether children could be removed from the group.
+     *
+     * @var bool
      */
     protected $allowDelete;
 
@@ -99,7 +101,7 @@ class ResizeFormListener implements EventSubscriberInterface
         }
 
         if (!is_array($data) && !($data instanceof \Traversable && $data instanceof \ArrayAccess)) {
-            throw new UnexpectedTypeException($data, 'array or (\Traversable and \ArrayAccess)');
+            $data = array();
         }
 
         // Remove all empty rows
@@ -139,10 +141,16 @@ class ResizeFormListener implements EventSubscriberInterface
         // The data mapper only adds, but does not remove items, so do this
         // here
         if ($this->allowDelete) {
+            $toDelete = array();
+
             foreach ($data as $name => $child) {
                 if (!$form->has($name)) {
-                    unset($data[$name]);
+                    $toDelete[] = $name;
                 }
+            }
+
+            foreach ($toDelete as $name) {
+                unset($data[$name]);
             }
         }
 

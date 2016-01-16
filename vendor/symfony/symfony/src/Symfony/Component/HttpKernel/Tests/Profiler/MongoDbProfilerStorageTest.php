@@ -47,19 +47,20 @@ class MongoDbProfilerStorageTestDataCollector extends DataCollector
     }
 }
 
+/**
+ * @requires extension mongo
+ */
 class MongoDbProfilerStorageTest extends AbstractProfilerStorageTest
 {
     protected static $storage;
 
     public static function setUpBeforeClass()
     {
-        if (extension_loaded('mongo')) {
-            self::$storage = new DummyMongoDbProfilerStorage('mongodb://localhost/symfony_tests/profiler_data', '', '', 86400);
-            try {
-                self::$storage->getMongo();
-            } catch (\MongoConnectionException $e) {
-                self::$storage = null;
-            }
+        self::$storage = new DummyMongoDbProfilerStorage('mongodb://localhost/symfony_tests/profiler_data', '', '', 86400);
+        try {
+            self::$storage->getMongo();
+        } catch (\MongoConnectionException $e) {
+            self::$storage = null;
         }
     }
 
@@ -71,10 +72,36 @@ class MongoDbProfilerStorageTest extends AbstractProfilerStorageTest
         }
     }
 
+    public function getDsns()
+    {
+        return array(
+            array('mongodb://localhost/symfony_tests/profiler_data', array(
+                'mongodb://localhost/symfony_tests',
+                'symfony_tests',
+                'profiler_data',
+            )),
+            array('mongodb://user:password@localhost/symfony_tests/profiler_data', array(
+                'mongodb://user:password@localhost/symfony_tests',
+                'symfony_tests',
+                'profiler_data',
+            )),
+            array('mongodb://user:password@localhost/admin/symfony_tests/profiler_data', array(
+                'mongodb://user:password@localhost/admin',
+                'symfony_tests',
+                'profiler_data',
+            )),
+            array('mongodb://user:password@localhost:27009,localhost:27010/?replicaSet=rs-name&authSource=admin/symfony_tests/profiler_data', array(
+                'mongodb://user:password@localhost:27009,localhost:27010/?replicaSet=rs-name&authSource=admin',
+                'symfony_tests',
+                'profiler_data',
+            )),
+        );
+    }
+
     public function testCleanup()
     {
         $dt = new \DateTime('-2 day');
-        for ($i = 0; $i < 3; $i++) {
+        for ($i = 0; $i < 3; ++$i) {
             $dt->modify('-1 day');
             $profile = new Profile('time_'.$i);
             $profile->setTime($dt->getTimestamp());
@@ -85,6 +112,17 @@ class MongoDbProfilerStorageTest extends AbstractProfilerStorageTest
         $this->assertCount(1, $records, '->find() returns only one record');
         $this->assertEquals($records[0]['token'], 'time_2', '->find() returns the latest added record');
         self::$storage->purge();
+    }
+
+    /**
+     * @dataProvider getDsns
+     */
+    public function testDsnParser($dsn, $expected)
+    {
+        $m = new \ReflectionMethod(self::$storage, 'parseDsn');
+        $m->setAccessible(true);
+
+        $this->assertEquals($expected, $m->invoke(self::$storage, $dsn));
     }
 
     public function testUtf8()
@@ -122,7 +160,7 @@ class MongoDbProfilerStorageTest extends AbstractProfilerStorageTest
         if (self::$storage) {
             self::$storage->purge();
         } else {
-            $this->markTestSkipped('MongoDbProfilerStorageTest requires the mongo PHP extension and a MongoDB server on localhost');
+            $this->markTestSkipped('A MongoDB server on localhost is required.');
         }
     }
 }

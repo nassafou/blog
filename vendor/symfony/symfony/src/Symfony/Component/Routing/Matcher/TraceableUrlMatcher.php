@@ -14,7 +14,6 @@ namespace Symfony\Component\Routing\Matcher;
 use Symfony\Component\Routing\Exception\ExceptionInterface;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
-use Symfony\Component\Routing\Matcher\UrlMatcher;
 
 /**
  * TraceableUrlMatcher helps debug path info matching by tracing the match.
@@ -25,7 +24,7 @@ class TraceableUrlMatcher extends UrlMatcher
 {
     const ROUTE_DOES_NOT_MATCH = 0;
     const ROUTE_ALMOST_MATCHES = 1;
-    const ROUTE_MATCHES        = 2;
+    const ROUTE_MATCHES = 2;
 
     protected $traces;
 
@@ -75,7 +74,7 @@ class TraceableUrlMatcher extends UrlMatcher
             if ($compiledRoute->getHostRegex() && !preg_match($compiledRoute->getHostRegex(), $this->context->getHost(), $hostMatches)) {
                 $this->addTrace(sprintf('Host "%s" does not match the requirement ("%s")', $this->context->getHost(), $route->getHost()), self::ROUTE_ALMOST_MATCHES, $name, $route);
 
-                return true;
+                continue;
             }
 
             // check HTTP method requirement
@@ -112,10 +111,10 @@ class TraceableUrlMatcher extends UrlMatcher
     private function addTrace($log, $level = self::ROUTE_DOES_NOT_MATCH, $name = null, $route = null)
     {
         $this->traces[] = array(
-            'log'   => $log,
-            'name'  => $name,
+            'log' => $log,
+            'name' => $name,
             'level' => $level,
-            'path'  => null !== $route ? $route->getPath() : null,
+            'path' => null !== $route ? $route->getPath() : null,
         );
     }
 }

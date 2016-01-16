@@ -1,0 +1,25 @@
+{% extends "BlogBundle::layout.html.twig" %}
+{% block title %}
+      Modifier d'un article  - {{ parent() }}
+  {% endblock%}
+
+{% block blog_body %}
+   
+    
+    <h2>Modifier un article </h2>
+    
+       {% include "BlogBundle:Blog:formulaire.html.twig" %}
+       
+    <p>
+        il faut editer un article existant
+    </p>
+    
+    <p>
+       
+        <a href="{{ path('blog_voir', {'id': article.id }) }}" class="btn">
+            <i class="icon-left"> Retour l'article </i>
+        </a>
+        
+    </p>
+
+{% endblock %}
