@@ -3,6 +3,7 @@
 namespace Sdz\BlogBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 /**
  * ArticleRepository
@@ -42,6 +43,36 @@ class ArticleRepository extends EntityRepository
         
         return $qb->getQuery()
                   ->getResult();
+    }
+    
+    // On ajoute 2 arguments: le nombre d'article par page et la page courante
+    public function getArticles($nombreParPage, $page)
+    {
+        //On déplace la vérification du numéro de page dans cette méthode
+        if( $page < 1 )
+        {
+            throw $this->createNotFoundException('La page inexistante  (page = '.$page.')' );
+        }
+        
+        // La construction de la requête reste inchangée
+        
+        $query = $this->createQueryBuilder('a')
+                      //On va joindre l'attribut image
+                      ->leftJoin('a.image', 'i')
+                        ->addSelect('i')
+                      //On joint l'attribut catégorie
+                      ->leftJoin('a.categories', 'c')
+                        ->addSelect('c')
+                      ->orderBy('a.date', 'DESC')
+                      ->getQuery();
+        //On definit l'article à partir duquel commencer la liste
+        $query->setFirstResult(($page-1) * $nombreParPage )
+        //Ainsi que le nombre d'articles a afficher
+              ->setMaxResults($nombreParPage);
+        
+        //Enfin, On retourne l'objet Paginator correspondant à la requête construite
+                      
+        return new Paginator($query);
     }
     
     
