@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(name="article")
  * @ORM\Entity(repositoryClass="Sdz\BlogBundle\Entity\ArticleRepository")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Article
 {
@@ -22,6 +23,12 @@ class Article
      *@ORM\ManyToMany(targetEntity="Sdz\BlogBundle\Entity\Categorie", cascade={"persist"})
      */
     private $categories;
+    
+    /**
+     *@ORM\Column(type="date", nullable=true)
+     */
+    private $dateEdition;
+    
     
     //comme la propriété $categories doit être un arrayCollection, on doit la definir dans un constructeur
     
@@ -41,7 +48,9 @@ class Article
         $this->date = new \DateTime(); // Par defaut, la date de l'article est la date d'aujourd'hui 
         $this->publication = true;
         $this->categories = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->commentaires = new \Doctrine\Common\Collections\ArrayCollection();
     }
+    
     /**
      * @var integer
      *
@@ -259,5 +268,39 @@ class Article
     public function getCategories()
     {
         return $this->categories;
+    }
+
+    /**
+     * Add commentaires
+     *
+     * @param \Sdz\BlogBundle\Entity\Commentaire $commentaires
+     * @return Article
+     */
+    public function addCommentaire(\Sdz\BlogBundle\Entity\Commentaire $commentaires)
+    {
+        $this->commentaires[] = $commentaires;
+        $commentaires->setArticle($this); //imbrication
+    
+        return $this;
+    }
+
+    /**
+     * Remove commentaires
+     *
+     * @param \Sdz\BlogBundle\Entity\Commentaire $commentaires
+     */
+    public function removeCommentaire(\Sdz\BlogBundle\Entity\Commentaire $commentaires)
+    {
+        $this->commentaires->removeElement($commentaires);
+    }
+
+    /**
+     * Get commentaires
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getCommentaires()
+    {
+        return $this->commentaires;
     }
 }
