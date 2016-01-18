@@ -3,12 +3,14 @@
 namespace Sdz\BlogBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * Article
  *
  * @ORM\Table(name="article")
  * @ORM\Entity(repositoryClass="Sdz\BlogBundle\Entity\ArticleRepository")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Article
 {
@@ -22,6 +24,12 @@ class Article
      *@ORM\ManyToMany(targetEntity="Sdz\BlogBundle\Entity\Categorie", cascade={"persist"})
      */
     private $categories;
+    
+    /**
+     *@ORM\Column(type="date", nullable=true)
+     */
+    private $dateEdition;
+    
     
     //comme la propriété $categories doit être un arrayCollection, on doit la definir dans un constructeur
     
@@ -41,6 +49,15 @@ class Article
         $this->date = new \DateTime(); // Par defaut, la date de l'article est la date d'aujourd'hui 
         $this->publication = true;
         $this->categories = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->commentaires = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    /**
+     *@ORM\preUpdate
+     *Callback pour mettre à jour la date d'édition à chaque modification de l'entité
+     */
+    public function updateDate()
+    {
+        $this->setDateEdition(new \DateTime());
     }
     /**
      * @var integer
