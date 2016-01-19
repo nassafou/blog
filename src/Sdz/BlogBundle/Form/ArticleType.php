@@ -23,6 +23,9 @@ class ArticleType extends AbstractType
             ->add('titre')
             //->add('categories')
             ->add('image', new ImageType())
+            ->add('categories', 'entity', array('class'      => 'BlogBundle:Categorie',
+                                                'property'   => 'nom',
+                                             'multiple'      => true ))
         ;
     }
     
