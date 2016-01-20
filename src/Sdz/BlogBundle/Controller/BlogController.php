@@ -8,77 +8,79 @@ use Sdz\BlogBundle\Entity\Article;
 use Sdz\BlogBundle\Entity\Image;
 use Sdz\BlogBundle\Entity\Commentaire;
 use Sdz\BlogBundle\Entity\ArticleCompetence;
+use Sdz\BlogBundle\Form\ArticleType;
+use Sdz\BlogBundle\Form\ArticleEditType;
 
 class BlogController extends Controller
 {
     public function indexAction($page)
     {
-        if( $page < 1 )
-        {
-            throw $this->createNotFoundException('La page inexistante  (page = '.$page.')' );
-        }
-        $articles = array(
-                array(   'id'       => 1,
-                         'titre'    => 'Un bon week-end ',
-                         'auteur'   =>  'YOZ',
-                         'date'     => new \DateTime()),
-                array(   'id'       => 2,
-                         'titre'    => 'Symfony2 ',
-                         'auteur'   =>  'Pass',
-                         'date'     => new \DateTime()),
-                array(   'id'       => 5,
-                         'titre'    => 'Pirate ',
-                         'auteur'   =>  'Man',
-                         'date'     => new \DateTime()),
-                );
         
-        return $this->render('BlogBundle:Blog:index.html.twig', array('articles' => $articles ));
+        
+        // Pour recuperer la liste de tous les articles on va utiliser findAll
+        $articles = $this->getDoctrine()
+                         ->getManager()
+                         ->getRepository('BlogBundle:Article')
+                         ->getArticles(3, $page);
+        return $this->render('BlogBundle:Blog:index.html.twig', array('articles'   => $articles,
+                                                                      'page'       => $page,
+                                                                      'nombrePage' => ceil(count($articles)/3)
+                                                                      ));
 
     }
     public function ajouterAction()
     {
-        // On récupére l'EntityManager
-       $em = $this->getDoctrine()
-           ->getManager();
-      // Création de l'entité Article
-      $article = new Article();
-      $article->setTitre('Mon dernier weekend');
-      $article->setContenu("C'était vraiment super et on s'est bien amusé.");
-      $article->setAuteur('winzou');
-    // Dans ce cas, on doit créer effectivement l'article en bdd
-    //pour lui assigner un id
-    // On doit faire cela pour pouvoir enregistrer les
-    //ArticleCompetence par la suite
-    $em->persist($article);
-    $em->flush(); // Maintenant, $article a un id défini
-     // Les compétences existent déjà, on les récupère depuis la bdd
-    $liste_competences = $em->getRepository('BlogBundle:Competence')
-                            ->findAll(); // Pour l'exemple, notre Article contient toutes les Competences
-    // Pour chaque compétence
-     foreach($liste_competences as $i => $competence)
-     {
-    // On crée une nouvelle « relation entre 1 article et 1 compétence »
-      $articleCompetence[$i] = new ArticleCompetence;
-     // On la lie à l'article, qui est ici toujours le même
-     $articleCompetence[$i]->setArticle($article);
-    // On la lie à la compétence, qui change ici dans la boucle foreach
-     $articleCompetence[$i]->setCompetence($competence);
-    // Arbitrairement, on dit que chaque compétence est requise au niveau 'Expert'
-    $articleCompetence[$i]->setNiveau('Expert');
-    // Et bien sûr, on persiste cette entité de relation, propriétaire des deux autres relations
-    $em->persist($articleCompetence[$i]);
-    }
-      // On déclenche l'enregistrement
-     $em->flush();
-     // ... reste de la méthode
-     
-    if ($this->getRequest()->getMethod() == 'POST') {
-      $this->get('session')->getFlashBag()->add('info', 'Article bien enregistré');
-         return $this->redirect( $this->generateUrl('blog_voir', array('id' => $article->getId())) );
-          }
+        //On crée un objet Article
+        $article = new Article();
+        
+        // On crée le formulaire grace à l'ArticleType
+        $form = $this->createForm( new ArticleType, $article );
+        
+        //On recupere la requete
+        $request=  $this->get('request');
+        
+        // si c'est un formulaire de type post ou on verifie qu'elle est 
+        if ($request->getMethod() == 'POST')
+        {
+            // On fait le lien  requete <-> Formulaire
+            
+            $form->bind($request);
+            
+            // On verifie que les valeurs entrées sont correctes
+            
+            
+            
+            if($form->isValid() )
+            {
+                // Ici on traite manuellement le uploadé
+                //$article->getImage()->upload();
+                
+                // On enregistre notre objet $article dans la base de données 
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($article);
+                $em->flush();
+                
+                // On definit un message flush
+                $this->get('session')->getFlashBag()->add('info', 'Article bien ajouté');
+                
+                //On redirige vers la page de visualisation de l'article nouvellement crée
+                return $this->redirect($this->generateUrl('blog_voir',
+                                                          array('id' => $article->getId())));
+                
+            }
+            
+        }
+        
+          
+          
+          //A ce stade :
+          // - Soit la requete est de type  GET, donc le visiteur vient d'arriver sur la page et veut
+          //voir le formulaire
+          //- Soit la requete est de type POST, mais le formulaire n'est pas valide, donc on l'affiche de nouveau
+          
 
-        return $this->render('BlogBundle:Blog:ajouter.html.twig');
-    
+        return $this->render('BlogBundle:Blog:ajouter.html.twig',
+                             array( 'form' => $form->createView() )); 
     }
     
     public function voirAction($id)
@@ -86,9 +88,8 @@ class BlogController extends Controller
         // On crée l'entity manager
         $em = $this->getDoctrine()->getManager();
         
-        
-          //receperer l'entité
-          $article = $em->getRepository('BlogBundle:Article')->find($id);
+         //receperer l'entité
+        $article = $em->getRepository('BlogBundle:Article')->find($id);
         
         //ou si on ne trouve aucun article
         if($article === null )
@@ -108,80 +109,108 @@ class BlogController extends Controller
                                                                      ));
     }
     
-    public function modifierAction($id_article)
+    public function modifierAction(Article $article)
     {
         
         //entity manager
-        $em = $this->getDoctrine()->getManager();
+        //$em = $this->getDoctrine()->getManager();
         //On récupère l'article
-        $article = $em->getRepository('BlogBundle:Article')->find($id_article);
+        //$article = $em->getRepository('BlogBundle:Article')->find($id);
         
-        if($article === null)
-         {
-           throw $this->NotFoundException('Article[id='.$id_article.'] inexistant.');   
-         }
-         
-         $categories = $em->getRepository('BlogBundle:Categorie')->findAll();
-         
-         //On cree une boucle pour lier les categories aux articles
-         foreach( $liste_categories as  $categories)
-         {
-            $article->addCategorie($categorie);
-         }
-         
-         //pas besoin de persiste
-         
-         //On flush et on declenche l'enregistre
-         $em->flush();
+        // On utilise le ArticleEditType
+        $form = $this->createForm(new ArticleEditType, $article );
         
-               return new Response('OK');
+        $request = $this->getRequest();
+        
+        if($request ->getMethod() == 'POST')
+        {
+            $form->bind($request);
+            if($form->isValid() )
+            {
+                //on enregistre l'article
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($article);
+                $em->flush();
+                
+                // on defnit un message flush
+                $this->get('session')->getFlashBag()->add('info', 'Article bien modifier');
+                
+                return $this->redirect($this->generateUrl('blog_voir', array('id' => $article->getId())) );
+            }
+        }  
+           return $this->render('BlogBundle:Blog:modifier.html.twig',
+           array(
+             'article' => $article,
+             'form' => $form->createView()
+              ));
     }
     
     #Suppression des categorie d'un article
-    public function supprimerAction($id)
+    public function supprimerAction(Article $article )
     {
-        //On recupere l'entity manager
-        $em = $this->getDoctrine()->getManager();
+        // On crée un formulaire vide , qui ne contiendra que le champ CSRF
+        // Cela permet de protéger la suppression d'article contre cette famille
         
-        //On recupere l'entité correspondant à l'id
-         $article = $em->getRepository('BlogBundle:Article')->find($id);
-         
-         if( $article === null )
-         {
-            throw $this->NotFoundException('Article[id='.$id.'] inexistant');
-         }
-        //on cherche toutes les categories:
-        $liste_categories = $em->getRespository('BlogBundle:Categorie')->findAll();
-        // On enleve toutes les categorie de l'article
-        foreach( $liste_categories as $categorie )
+        $form = $this->createFormBuilder()->getForm();
+        
+        $request = $this->getRequest();
+        
+        if($request ->getMethod() == 'POST')
         {
-            // On appele la methode removeCategorie()
+            $form->bind($request);
             
-            $article->removeCategorie($categorie);
+            if($form->isValid() )
+            {
+                //on enregistre l'article
+                $em = $this->getDoctrine()->getManager();
+                $em->remove($article);
+                $em->flush();
+                
+                // on defnit un message flush
+                $this->get('session')->getFlashBag()->add('info', 'Article bien supprimé');
+                
+                return $this->redirect($this->generateUrl('blog_accueil') );
+            }
         }
-        
-        //pas de persist
-        // on flush
-        $article->removeCategorie($categorie);
-        return new Response('OK');
-        
-       // return $this->render('BlogBundle:Blog:supprimer.html.twig', array('name' => $name));
+         // Si la requete est en GET, on affiche une page de confirmation avant de supprimer
+           return $this->render('BlogBundle:Blog:supprimer.html.twig',
+           array(
+             'article' => $article,
+             'form' => $form->createView()
+              ));
     }
     
     public function menuAction($nombre)
     {
-        $liste = array(
-                array(   'id'       => 1,
-                         'titre'    => 'Un bon week-end '),
-                array(   'id'       => 2,
-                         'titre'    => 'Symfony2'),
-                array(   'id'       => 5,
-                         'titre'    => 'Pirate '),
-                );
+        $liste = $this->getDoctrine()
+                      ->getManager()
+                      ->getRepository('BlogBundle:Article')
+                      ->findBy(
+                               array(), //Pas de critère
+                               array('date' => 'desc'),//trie par date décroissante
+                               $nombre, //on selection un nombre
+                               0 // a partir du premier
+                               );
         return $this->render('BlogBundle:Blog:menu.html.twig', array('liste_articles' => $liste ));
     }
     public function formulaireAction($id)
     {
         return $this->render('BlogBundle:Blog:formulaire.html.twig', array('name' => $name));
+    }
+    public function testAction()
+    {
+        $listeArticles = $this->getDoctrine()
+                              ->getManager()
+                              ->getRepository('BlogBundle:Article')
+                              ->getArticleAvecCommentaires();
+            
+            foreach($listeArticles as $article )
+            {
+                //Ne déclenche pas de requête : les commentaires sont déja chargés
+                //Faire une boucle pour les affichés tous
+                $article->getCommentaires();
+                
+                            
+            }
     }
 }
