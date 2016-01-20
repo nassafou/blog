@@ -3,6 +3,11 @@
 namespace Sdz\BlogBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\Common\Collections\ArrayCollection;
+use Sdz\BlogBundle\Entity\Tag;
+use Symfony\Component\Validator\ExecutionContextInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Article
@@ -10,6 +15,8 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="article")
  * @ORM\Entity(repositoryClass="Sdz\BlogBundle\Entity\ArticleRepository")
  * @ORM\HasLifecycleCallbacks()
+ * @Assert\Callback(methods={"contenuValide"})
+ * @UniqueEntity(fields="titre", message="Un article existe déja avec ce titre.")
  */
 class Article
 {
@@ -35,6 +42,7 @@ class Article
     
     /**
      *@ORM\OneToOne(targetEntity="Sdz\BlogBundle\Entity\Image", cascade={"persist"})
+     *@Assert\Valid()
      */
     private $image;
     
@@ -42,6 +50,7 @@ class Article
      *@ORM\Column(name="publication", type="boolean")
      */
     private $publication;
+    
     //definition des attributs
     public function __construct()
     {
@@ -49,6 +58,19 @@ class Article
         $this->publication = true;
         $this->categories = new \Doctrine\Common\Collections\ArrayCollection();
         $this->commentaires = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    public function contenuValide(ExecutionContextInterface $context)
+    {
+        $mots_interdits = array('échec', 'abandon');
+        
+        // On verfie que le contenu ne contient pas l'un des mots
+        if(preg_match('#'.implode('|', $mots_interdits).'#', $this->getContenu())){
+            //La regle est violé, on definit le l'erreur et son message
+            // 1 er argument : on dit quel attribut l'erreur concerne, ici <<contenu >>
+            // 2 e argument : le message d'erreur
+            
+            $context->addViolationAt('contenu','Contenu invalide car il contient un mot inderdit, array(), null');
+        }
     }
     
     
@@ -65,6 +87,7 @@ class Article
      * @var \DateTime
      *
      * @ORM\Column(name="date", type="datetime")
+     * @Assert\DateTime()
      */
     private $date;
 
@@ -72,6 +95,12 @@ class Article
      * @var string
      *
      * @ORM\Column(name="auteur", type="string", length=255)
+     * @Assert\Length(
+     *        min = "2",
+     *        max = "50",
+     *        minMessage = "votre nom doit faire au moins {{ limit }} caractères ",
+     *        maxMessage= "Votre nom ne peut pas être plus long que {{ limit }} caractères "
+     *        )
      */
     private $auteur;
 
@@ -79,13 +108,20 @@ class Article
      * @var string
      *
      * @ORM\Column(name="contenu", type="string", length=500)
+     * @Assert\NotBlank()
      */
     private $contenu;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="titre", type="string", length=255)
+     * @ORM\Column(name="titre", type="string", length=255, unique=true)
+     * @Assert\Length(
+               min = "10",
+               max = "50",
+               minMessage = "Votre titre doit faire au {{ limit }} caractères",
+               maxMessage = "Votre titre ne peut pas être plus long que {{ limit }} caractères "
+     )
      */
     private $titre;
 
