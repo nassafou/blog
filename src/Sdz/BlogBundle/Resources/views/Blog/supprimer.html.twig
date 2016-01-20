@@ -1,0 +1,22 @@
+{% extends "BlogBundle::layout.html.twig" %}
+
+{% block title %}
+    Supprimer un article - {{ parent() }}
+{% endblock %}
+
+{% block blog_body %}
+    <h2>Supprimer un article </h2>
+    <p>
+        Etes-vous certain de vouloir supprimer l'article "{{ article.titre }}" ?
+    </p>
+    
+    {# On met l'id de l'arrtile dans la route de l'action du formulaire #}
+    
+    <form action="{{ path('blog_supprimer', {'id': article.id }) }}" method="post">
+        <a href="{{ path('blog_voir', {'id': article.id } ) }}" class="btn"><i class="icon-chevron-left"></i> Retour à l'article </a>
+        
+        <input type="submit" value="Supprimer" class="btn btn-danger"/>
+        {{ form_rest(form) }}
+    </form>
+    
+{% endblock %}
