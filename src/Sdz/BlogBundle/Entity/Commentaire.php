@@ -4,6 +4,9 @@ namespace Sdz\BlogBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Sdz\BlogBundle\Validator\AntiFlood;
+use Symfony\Component\Validator\Constraints as Assert;
+
 /**
  * Commentaire
  *
@@ -38,6 +41,7 @@ class Commentaire
      * @var string
      *
      * @ORM\Column(name="contenu", type="text")
+     * @AntiFlood()
      */
     private $contenu;
 
@@ -47,6 +51,14 @@ class Commentaire
      * @ORM\Column(name="date", type="datetime")
      */
     private $date;
+    
+    /**
+     *@Assert\True()
+     */
+    public function isFlood()
+    {
+        return false;
+    }
     
     public function __construct()
     {
