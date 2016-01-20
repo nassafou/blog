@@ -4,32 +4,8 @@
   {% endblock%}
 
 {% block blog_body %}
-       
-       <h2>
-        {# On vérifie qu'une image soit bien associé a l'article #}
-        {% if article.image is not  null %}
-            <img src="{{ article.image.url }}" alt="{{ article.image.alt }}" />
-        {% endif %}
-        {{ article.titre }} 
-       </h2>
-       <i> par {{ article.auteur }}, le {{ article.date | date('d/m/Y') }} </i>
-       {% if article.categories.count > 0 %}
-          - Categories :
-          {% for categorie in article.categories %}
-           {{ categorie.nom }}
-           {% if not loop.last %} - {% endif %}
-          {% endfor %}
-         {% endif %}
-    <div class="well">
-        {{ article.contenu }}
-        <ul>
-        {% for liste in liste_commentaires %}
-           <li> {{ liste.contenu }},
-           par {{ liste.auteur }},
-           le {{ liste.date | date('d/m/Y') }} </li>
-        {% endfor %}
-        </ul>
-    </div>
+       {# on inclut la vue #}
+       {% include "BlogBundle:Blog:article.html.twig"%}
     <p>
         <a href="{{ path('blog_accueil' ) }}" class="btn">
             <i class="icon-chevron">Retour a la liste</i>
