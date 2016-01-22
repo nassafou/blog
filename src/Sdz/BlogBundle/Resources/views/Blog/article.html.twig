@@ -28,7 +28,7 @@
  {# On affiche les categories éventuelles #}
  
  {% if article.categories.count > 0 %}
-     <div class="well well-small">
+     <div class="span3">
         <p>
             <i>
                 Categorie:
@@ -39,4 +39,27 @@
         </p>
     
  </div>
+     
+     
+{% endif %}
+
+
+{# On affiche les categories éventuelles #}
+ 
+ {% if article.commentaires.count > 0 %}
+     
+        <p>
+            
+                
+                {% for commentaire in article.commentaires %}
+                   Commentaire de : <i>{{ commentaire.auteur }}</i><br />
+                    <div class="well">{{ commentaire.contenu }} {% if not loop.last %}, {% endif %}
+                    </div>
+                    {% endfor%}
+            
+        </p>
+    
+ 
+     
+     
 {% endif %}
