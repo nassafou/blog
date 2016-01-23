@@ -1,0 +1,44 @@
+
+/* éléments principaux de la page  */
+body
+{
+    background-color: red;
+    
+}
+
+
+
+
+section
+{
+    
+}
+
+
+/* header */
+
+/* Navigation */
+
+/* Bannière */
+/* corps */
+
+ #menu
+{
+    width: 235px;
+    
+    
+}
+#content
+{
+    width: 625px;
+    margin-right: 15px;
+}
+
+#menu, #content
+{
+    display: inline-block;
+    vertical-align: top;
+}
+
+
+/* footer */
