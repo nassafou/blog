@@ -1,0 +1,48 @@
+INCIDENT
+->Les objectifs du processus incident 
+
+-Aligner les activités et priorités de la gestion des incidents avec celles du "Métier"
+-Résoudre rapidement les incidents
+-Adapter la gestion des incidents en fonction dela population impactée
+-Garantir un niveau de satisfaction utilisateurs au travers de la qualité de service
+
+->Definition INCIDENT 
+Le processus de gestion des incidents (incident Management) est en charge  de restaurer le service normal
+aussi tot que possible et d'en minimiser l'impact négatif.
+
+Un incident se caractérise par toute indisponibilité ou dégradation d'un service IT.
+
+-> Grace à ce e-learning vous serez capable de ...
+- Suivre et enrégistrer un incident
+- Communiquer avec les différents profils qui intervinennent
+- Escalader un incident 
+- Savoir identifier les roles et responsabilités qui interviennent dans le cycle de vie d'un incident 
+
+
+-Les acteurs clés :
+->Julie, Utilisateur
+Remonte l’incident
+N’intervient pas dans la résolution de l’incident
+Valide que l’incident a bien été résolu pour que le support IT puisse clôturer l’incident
+
+-> Support IT/Membre Feature Teal/Incident Owner
+Pilier de la résolution d’un incident
+Enregistre et traite les incidents de bout-en-bout
+Veille à collecter l’ensemble des informations utiles à leur qualification et priorisation pour permettre d’accélérer leur résolution
+
+-> Manager support IT/FT leader / Manager incident 
+Premier maillon de la chaîne en cas d’escalade d’un incident
+Responsable du traitement des incidents
+Garant de la bonne exécution du processus au sein de leurs équipes.
+Contrôle l’activité et produit des indicateurs de performance sur son périmètre.
+
+-> Tour de controle / coordinateur incident 
+Coordonne la résolution d’un incident catégorisé en priorité haute (P1 ou P2)
+Facilite la gestion des incidents pour les équipes IT
+
+-> Process officer
+
+N’intervient pas directement dans la gestion des incidents
+Définit les processus, les règles et les bonnes pratiques
+Surveille leur bonne application
+Mesure la performance pour identifier les axes d’amélioration

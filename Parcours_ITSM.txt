@@ -1,0 +1,33 @@
+http://go/itsmlearning
+Chacun des cours dédié à un processus ITSM:
+-Incident
+-Incident à fort impact
+-Requête
+-Problème
+-et Changement 
+
+INTRO:
+ITSM-> IT Service Management
+Ensemble des meilleurs prtiques à mettre en place au des DSI
+pour garantir la qualité de service->itil
+ITIL:
+Un emsemble de processus IT
+- et un outil unique permetant de les mettre en oeuvre
+
+ITSM-> Permer d'améliorer la satifaction de nos métiers et clients par l'application des bonnes pratiques ITIL
+la numerisation de federal reserve RCA,EBA renforce la maitrise de nos risques IT 
+-> Que contien le parcours ITSM 
+itsm regroupe 
+-Incident
+-Incident à fort impact
+-Requête
+-Problème
+-et Changement  et livrason
+et socle documentaire vient completer les connaissances sur ces processus disponible sur intranet
+après avoir suivi ce processus on sera capable de 
+- s'identifier aux roles de chaque processus
+- Connaitre les règles clés de chaque processus 
+-valider le seuil de connaissances 
+-Lire doc  officiel avant de suivre le e-learning
+1h30 à la formation
+->Incident -> Requête-> Problème et Changement

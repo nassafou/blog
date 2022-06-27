@@ -1,0 +1,67 @@
+REQUETE 
+Une requête est formulée par un utilisateur final pour obtenir des informations, des conseils, un accès ,
+du matériel... Les requêtes sont traitées par le processus de gestion des requetes sont traitées par le processus 
+de gestion des requêtes via un catalogue de services
+
+Grace à ce e-learning vous serez capable de ...
+- Enrgistrer, suivre et approuver une requeête
+- Escalader une requête avant exécution /validation
+- Communiquer avec les différents acteurs qui interviennent 
+- Savoir identifier les rôles et responsabilités des profils qui interviennent dans le cycle de  vie d'une requête
+
+
+
+DEMANDE (REQUETE)
+
+La bonne réponse est une demande de production d'un rapport d'activité (log).
+
+En effet, à ce stade, rien ne permet de conclure à la survenue d’un incident. Il s’agit bien d’une demande d’un utilisateur, ce que nous appelons une requête.
+
+Bon à savoir
+La réception de la sollicitation est la première des 6 étapes dans le processus de gestion des requêtes.
+L'étape suivante est l'enregistrement de la requête dans Unity.
+
+- Pour les demandes il y a les anciennes demandes sont enrégistrés dans un catalogue
+
+Bon à savoir
+Afin d'améliorer la satisfaction de nos clients, les demandes récurrentes sont sont standardisées, documentées, intégrées dans le catalogue de requêtes, puis mises à la disposition de nos utilisateurs dans le portail de services IT.
+
+le Process officier maitrise tous les process
+les catalogues sont gérés par le service desk leader
+- nouvelle demande -> enrégistrée comme "requête générique"
+- Qualification de la requête -> pour savoir s'il ya un risque pour la prod
+
+La solution présente bien un risque.
+
+En effet, même une simple opération de lecture peut présenter un danger pour la performance ou la disponibilité du service.
+
+Dans ce cas précis, Julie demande des données sur une grande période de temps et donc probablement un grand volume de données à extraire des systèmes. Mike ne devrait pas faire cela sans prendre des précautions supplémentaires.
+
+-> le support demande une autorisation à IT manager
+
+-Utilisatrice 
+Acteur clé du processus
+Confirme la bonne exécution des requêtes qu’elle soumet
+
+Support IT / Request Analyste
+Enregistre et exécute les requêtes
+Collecte les données pour qualifier et prioriser une requête
+
+Manager support IT / Request Manager 
+
+Profil clé avec rôle de Request Manager
+Responsable de la bonne exécution des requêtes et du processus
+Contrôle l’activité et produit des indicateurs de performance
+
+Service Desk Leader / Request coordinator 
+
+Responsable des équipes support
+Responsable du pilotage
+Assure le respect des délais de traitement des requêtes
+
+Process Officer
+
+N’intervient pas directement dans la gestion des requêtes
+Définit les processus, les règles et les bonnes pratiques
+Surveille leur bonne application
+Mesure la performance pour identifier les axes d’amélioration

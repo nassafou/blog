@@ -1,0 +1,638 @@
+http://go/itsmlearning
+Chacun des cours dédié à un processus ITSM:
+-Incident
+-Incident à fort impact
+-Requête
+-Problème
+-et Changement 
+
+INTRO:
+ITSM-> IT Service Management
+Ensemble des meilleurs prtiques à mettre en place au des DSI
+pour garantir la qualité de service->itil
+ITIL:
+Un emsemble de processus IT
+- et un outil unique permetant de les mettre en oeuvre
+
+ITSM-> Permer d'améliorer la satifaction de nos métiers et clients par l'application des bonnes pratiques ITIL
+la numerisation de federal reserve RCA,EBA renforce la maitrise de nos risques IT 
+-> Que contien le parcours ITSM 
+itsm regroupe 
+-Incident
+-Incident à fort impact
+-Requête
+-Problème
+-et Changement  et livrason
+et socle documentaire vient completer les connaissances sur ces processus disponible sur intranet
+après avoir suivi ce processus on sera capable de 
+- s'identifier aux roles de chaque processus
+- Connaitre les règles clés de chaque processus 
+-valider le seuil de connaissances 
+-Lire doc  officiel avant de suivre le e-learning
+1h30 à la formation
+->Incident -> Requête-> Problème et Changement
+
+INCIDENT
+->Les objectifs du processus incident 
+
+-Aligner les activités et priorités de la gestion des incidents avec celles du "Métier"
+-Résoudre rapidement les incidents
+-Adapter la gestion des incidents en fonction dela population impactée
+-Garantir un niveau de satisfaction utilisateurs au travers de la qualité de service
+
+->Definition INCIDENT 
+Le processus de gestion des incidents (incident Management) est en charge  de restaurer le service normal
+aussi tot que possible et d'en minimiser l'impact négatif.
+
+Un incident se caractérise par toute indisponibilité ou dégradation d'un service IT.
+
+-> Grace à ce e-learning vous serez capable de ...
+- Suivre et enrégistrer un incident
+- Communiquer avec les différents profils qui intervinennent
+- Escalader un incident 
+- Savoir identifier les roles et responsabilités qui interviennent dans le cycle de vie d'un incident 
+
+
+-Les acteurs clés :
+->Julie, Utilisateur
+Remonte l’incident
+N’intervient pas dans la résolution de l’incident
+Valide que l’incident a bien été résolu pour que le support IT puisse clôturer l’incident
+
+-> Support IT/Membre Feature Teal/Incident Owner
+Pilier de la résolution d’un incident
+Enregistre et traite les incidents de bout-en-bout
+Veille à collecter l’ensemble des informations utiles à leur qualification et priorisation pour permettre d’accélérer leur résolution
+
+-> Manager support IT/FT leader / Manager incident 
+Premier maillon de la chaîne en cas d’escalade d’un incident
+Responsable du traitement des incidents
+Garant de la bonne exécution du processus au sein de leurs équipes.
+Contrôle l’activité et produit des indicateurs de performance sur son périmètre.
+
+-> Tour de controle / coordinateur incident 
+Coordonne la résolution d’un incident catégorisé en priorité haute (P1 ou P2)
+Facilite la gestion des incidents pour les équipes IT
+
+-> Process officer
+
+N’intervient pas directement dans la gestion des incidents
+Définit les processus, les règles et les bonnes pratiques
+Surveille leur bonne application
+Mesure la performance pour identifier les axes d’amélioration
+
+
+
+PROBLEMES
+
+
+Mike se trompe. Si la gestion des incidents vise à restaurer le plus rapidement possible le service, la gestion des problèmes vise quant à elle à prévenir la réapparition des ces incidents ou à en minimiser les impacts ! Ici, dans cet exemple, des actions seront nécessaires pour atteindre ces deux objectifs. Il convient donc de l'adresser via un problème.
+
+
+
+Gardez à l’esprit que la gestion des problèmes a pour objet essentiel de prévenir les risques de perturbations ou d’interruption de nos services IT. Ainsi, si la création des problèmes est obligatoire lors de la survenue d’un incident majeur ou significatif, nous conseillons fortement de suivre au travers de ce processus tout type d’amélioration et de plan permettant de faire baisser les risques pesant sur les services IT.
+
+3 facteurs de risques 
+1- L'impact maximum pour nos clients et métiers que pourrait engendrer une occurence  du problème
+2- La fréquence maximum supposée d'apparition de nouvelles occurrences du problème 
+3- La complexité et/ou le cout de traitement de chacune des occurrences du problème
+
+Les 3 facteurs permettent de calculer un niveau de risque associé au problème et cela sert à priorisé les problèmes entre eux 
+
+Chaque niveau de risque de chaque problème permet de les compoarer et donc de les prioriser
+
+On enrégistre les actions correctrices du problème dans le backlog-> les actions seront priorisées en fonction du risque associé aux problèmes
+actions correctrices correctement exécutées -> réévaluer le niveau de risque du problème -> diminuer la réquence d'approrition du problème ou minimiser les impacts-> 
+permet de voir le risque résidule associé au problème
+-> lorsque le risque résiduel devient acceptable pour la qualité de service attendue -> on abandonne certaines actions correctrice -> acceptation du risque résidul.
+
+
+
+Mike a correctement identifié la cause principale du problème, mais il a également oublié un détail important lors de l’incident. C’est l’utilisatrice du service elle-même qui a remonté l’alerte au support, alors que celui-ci aurait dû disposer des moyens de détection en amont du problème de capacité afin de le prévenir, par exemple en mesurant l’activité du service et la charge de ses principaux composants techniques.
+
+Ainsi, la cause principale du problème est bien le défaut de capacité de la base de données, le défaut de monitoring du service est considéré comme une cause secondaire, ou une vulnérabilité du service. La gestion des problèmes vise à identifier et traiter l’ensemble des causes, et pas seulement la cause principale.
+
+-> l'ensemble des causes ou vulnérabilités a traiter lors de l'investigation d'un problème
+
+Les méthode :
+-> le diagramme d'Ishikawa ou le pareto 
+-> La gègle des 5 pourquoi -> consiste simplement à rechercher le pourquoi du pourquoi de l'incident afin de circonscrire rapidement les multiples causes possibles ou facteurs aggravantsde l'incident
+
+-> Exécution des actions correctrices -> étape de résolution du problème
+
+
+La revue des problèmes consiste à réunir les acteurs clés en charge de la résolution des problèmes afin d’en assurer le suivi et de prendre les bonnes décisions
+-> une revue régulière à minima mensuelle , dela liste des problèmes du périmetre considéré et leurs risque associés 
+
+
+Bon à savoir
+Le propriétaire du problème doit être en capacité de fournir l’état d’avancement des actions correctrices. Aussi, sauf en cas de besoin d’expertise spécifique, la présence des personnes affectées aux actions correctrices n’est pas nécessaire. En revanche, la présence du propriétaire du service, du responsable IT du service et du propriétaire du problème est essentielle pour l’efficacité de la revue des problèmes.
+
+
+
+Les décisions attendues lors de cette revue sont les suivantes :
+
+Modifier l’évaluation du risque du problème (par exemple suite à l'exécution d’une des actions correctrices, ou un complément d’investigation)
+Décider de la clôture d’un problème par la finalisation du plan d’action
+Décider de l’acceptation du risque résiduel par le propriétaire du service
+
+
+L'utilisateur n'est pas un acteur de ce processus.
+
+Le process owner pas impliqué dans la gestion opérationnelle.
+
+Les personnes auxquelles on a affecté des tâches de remédiation n'ont pas nécessairement la vue d'ensemble du plan d'action d'un problème
+
+Support IT
+
+Enregistre et analyse les problèmes
+Coordonne les plans d’actions permettant d’apporter les corrections nécessaires
+Contribue à définir les plans d'actions
+Evalue les risques
+
+Product Owner 
+
+Profil clé avec rôle de Product owner
+Responsable de la priorisation des problèmes et des plans d’action correctives
+Responsable de l'acceptation des risques associés aux problèmes
+
+It manager 
+
+Porte la fonction de Problem manager
+Responsable des traitements des problèmes et garant de la bonne exécution du processus
+Contrôle l’activité et produit les indicateurs de performance sur son périmètre
+
+
+Process officer 
+
+N’intervient pas directement dans la gestion des problèmes
+Définit les processus, les règles et les bonnes pratiques
+Surveille leur bonne application
+Mesure la performance pour identifier les axes d’amélioration
+
+REQUETE 
+Une requête est formulée par un utilisateur final pour obtenir des informations, des conseils, un accès ,
+du matériel... Les requêtes sont traitées par le processus de gestion des requetes sont traitées par le processus 
+de gestion des requêtes via un catalogue de services
+
+Grace à ce e-learning vous serez capable de ...
+- Enrgistrer, suivre et approuver une requeête
+- Escalader une requête avant exécution /validation
+- Communiquer avec les différents acteurs qui interviennent 
+- Savoir identifier les rôles et responsabilités des profils qui interviennent dans le cycle de  vie d'une requête
+
+
+
+DEMANDE (REQUETE)
+
+La bonne réponse est une demande de production d'un rapport d'activité (log).
+
+En effet, à ce stade, rien ne permet de conclure à la survenue d’un incident. Il s’agit bien d’une demande d’un utilisateur, ce que nous appelons une requête.
+
+Bon à savoir
+La réception de la sollicitation est la première des 6 étapes dans le processus de gestion des requêtes.
+L'étape suivante est l'enregistrement de la requête dans Unity.
+
+- Pour les demandes il y a les anciennes demandes sont enrégistrés dans un catalogue
+
+Bon à savoir
+Afin d'améliorer la satisfaction de nos clients, les demandes récurrentes sont sont standardisées, documentées, intégrées dans le catalogue de requêtes, puis mises à la disposition de nos utilisateurs dans le portail de services IT.
+
+le Process officier maitrise tous les process
+les catalogues sont gérés par le service desk leader
+- nouvelle demande -> enrégistrée comme "requête générique"
+- Qualification de la requête -> pour savoir s'il ya un risque pour la prod
+
+La solution présente bien un risque.
+
+En effet, même une simple opération de lecture peut présenter un danger pour la performance ou la disponibilité du service.
+
+Dans ce cas précis, Julie demande des données sur une grande période de temps et donc probablement un grand volume de données à extraire des systèmes. Mike ne devrait pas faire cela sans prendre des précautions supplémentaires.
+
+-> le support demande une autorisation à IT manager
+
+-Utilisatrice 
+Acteur clé du processus
+Confirme la bonne exécution des requêtes qu’elle soumet
+
+Support IT / Request Analyste
+Enregistre et exécute les requêtes
+Collecte les données pour qualifier et prioriser une requête
+
+Manager support IT / Request Manager 
+
+Profil clé avec rôle de Request Manager
+Responsable de la bonne exécution des requêtes et du processus
+Contrôle l’activité et produit des indicateurs de performance
+
+Service Desk Leader / Request coordinator 
+
+Responsable des équipes support
+Responsable du pilotage
+Assure le respect des délais de traitement des requêtes
+
+Process Officer
+
+N’intervient pas directement dans la gestion des requêtes
+Définit les processus, les règles et les bonnes pratiques
+Surveille leur bonne application
+Mesure la performance pour identifier les axes d’amélioration
+
+
+
+CHANGEMENT LIVRABLE 
+
+La livraison et les changements sont deux processus différents mais étroitement liés. La Livraison fait référence à l’ensemble des éléments, aussi appelé “package” ou “livrable”, qui seront déployés lors d’un changement.
+
+Bon à savoir
+Le processus de gestion des livraisons se focalise sur la manière de construire le livrable, de le tester, puis de le déployer techniquement en production.
+
+Le processus de gestion des changements se concentre sur la planification, l’approbation et la coordination de l’opération de mise en production.
+
+
+Mike confond ici le risque associé au changement, qui peut en effet être très largement maîtrisé grâce à l’automatisation, et les risques qui sont associés au contenu, “le livrable” qui va être déployé.
+
+Bon à savoir
+Les changements standards ne concernent que des opérations de modification de la production qui sont totalement maîtrisées dans leur contenu comme dans leur exécution. Ils sont documentés et revus annuellement.
+
+Mike parle ici de nouvelles fonctionnalités pour le métier, il faut qu’il déclare son opération à venir comme un changement dit “normal”.
+
+
+Changement standard -> documenté et maitrisé 
+Changement normal -> Ajout d'une fonctionnalité (ne doit pas rentrer en conflit avec d'autres opérations prévu en même temps sur le système d'information
+Changement en urgence -> pas de phase d'approbation (mais peut être utiliser que pour éviter ou corriger un incident à fort impact pour le 
+metier, 
+
+
+Les étapes du cycle de vie d'un changement sont les suivants :
+
+1) Enregistrement ;
+
+2) Révision;
+
+3) Qualification;
+
+4) Autorisation;
+
+5) Coordination;
+
+6) Clôture.
+
+-> dans la phase de qualification évalution des risques associés 
+
+Les bonnes réponses sont : La validation métier des demandes d'évolutions (BRV), l'analyse d'impact du livrable, les résultats des tests et l'analyse d'impact du changement.
+
+- La validation métier des demandes d'évolutions (BRV) -> Point d'entrée du processus de livraison (le metier priorisé et valider les évolutions)
+
+- 2 Analyse d'impacts 
+- Le niveau de criticité du changement (mineur, significatif, majeur) arrêt de service critique pendant plusieurs heures, nouvelle règles comptable ou modifier une interface de saisie impact different
+
+Bon à savoir
+Un changement significatif ou majeur implique un délai de planification et doit être prévu au moins 5 jours ouvrés à l’avance. Cela permet de disposer du temps nécessaire pour le sécuriser et être correctement coordonné.
+
+Un changement identifié comme Significatif ou Majeur devra obtenir l’approbation d’acteurs complémentaires, par exemple les tours de contrôles ou bien encore les responsables des chaînes métiers sensibles si elles sont impactées.
+
+
+Bon à savoir
+Dans le cas suivant, le risque du changement est significatif. Il doit normalement être enregistré au moins 5 jours avant.
+
+Cependant, le business attend les fonctionnalités pour dans 2 jours, ils devront donc faire une dérogation pour que le changement puisse se faire dans ces délais.
+
+
+Evaluer criticité du changement -> évaluer l'impact du livrable (applicable les services IT identifiés comme sensibles par les DSI)
+-les contenues dans les livrables vont avoir des impacts important sur:
+1- des traitements réglementaires ou des chaines métiers critiques
+2- Les fonctionnalité visibles par les clients externes
+3- Le socle technique de l'IT service (modification d'architecture ou d'infrastrure)
+
+l'analyse d'impact du changement 
+les éléments qui augmentent la criticité du changement:
+
+1- La durée d'interruption de service. Plus elle est importante ; plus le changment sera considéré comme critique
+2- La criticité de ton IT service : 
+3- Le périmètre métier impacté, plus il sera large, plus la critité pourra être élevée 
+4- La capacité a effectuer un "retour en arrière" en cas de soucis identifié pendant ou après l'opération
+
+Dans ton changement, ce sont les deux derniers critères qui ont fait passer sa criticité de Mineur à significatif
+
+2 choses à minima sont attendues dans cet élément clé:
+
+1-La liste des tests effectués sur le livrable: tests de non regression, tests de performances, tests de charge
+
+2- Ainsi que leurs résultats pour chacunes des fonctionnalités livrées, 
+
+
+Bon à savoir
+Les différents types de tests à effectuer dépendent du contexte de l’IT service et doivent faire l’objet d’une concertation entre le responsable Métier du service et l’IT. Ils doivent être documentés dans ce que l’on appelle la stratégie de test du service.
+
+
+Bon à savoir
+Tout changement Majeur ou Significatif doit obtenir l’approbation de la Tour de contrôle en plus de la validation du responsable Métier et IT de l’IT service, et ce pour plusieurs raisons :
+
+- En cas de conflit identifié avec d’autres changements majeurs ou significatifs déjà planifiés et incompatibles avec son opération.
+
+- L’état de la production : une direction informatique peut décider de geler les mises en production durant un incident majeur en cours impactant certains périmètres métiers.
+
+- En cas de conflit avec un moratoire, qui limite ou interdit tout changement sur un périmètre donné sur certaines plages de temps.
+
+Bon à savoir
+Le responsable Métier et IT de l’IT service ainsi que les plages horaires de maintenance autorisées et l’ensemble des pratiques opérationnelles liées à l’IT service sont normalement documentées dans les Change, Release et Test Strategy. Retrouvez les templates sur go/itprocess.
+
+Bon à savoir
+Toutes les Tours de Contrôle n’assurent pas nécessairement un dispositif de couverture 24h/24 et 7j/7.
+
+Renseignez-vous auprès de votre Process Officer pour connaître les dispositifs en place au sein de votre DSI.
+
+Tour de controle (TC )
+Pendant la phase de déploiement 
+1- La communication: auprès des utilisateurs de ton service, auprès de la DSI sur l'ensemble des opérateurs 
+2- La coordination des différents acteurs impliqués dans ton opération de déploiement
+3- les tests de recette à mener sur le service pour nous assurer que tout est normal une fois le déploiement réalisé
+
+-> prévénir la TC en cas d'incident ou à la fin de la récette 
+
+
+étal final de l'opération = "succes" , "partiel" ou retour arrière
+
+Roles et responsabilités
+
+Membre de l'équipe IT
+Intervient en tant que Change Owner
+Enregistre, vérifie, évalue et clôt les changements
+
+Process officer
+
+N’intervient pas directement dans la gestion des changements
+Définit les processus, les règles et les bonnes pratiques
+Surveille leur bonne application
+Mesure la performance pour identifier les axes d’amélioration
+
+Tour de controle
+Profil clé du processus
+Responsable du pilotage et de la coordination des changements dans son domaine IT
+Est responsable de l'approbation des changements
+
+Manager IT
+
+Responsable de l'équipe IT
+Porte la fonction de Change Manager
+Responsable de la gestion des performances et des indicateurs de risques sur son périmètre
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

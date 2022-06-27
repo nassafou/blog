@@ -1,0 +1,86 @@
+PROBLEMES
+
+
+Mike se trompe. Si la gestion des incidents vise à restaurer le plus rapidement possible le service, la gestion des problèmes vise quant à elle à prévenir la réapparition des ces incidents ou à en minimiser les impacts ! Ici, dans cet exemple, des actions seront nécessaires pour atteindre ces deux objectifs. Il convient donc de l'adresser via un problème.
+
+
+
+Gardez à l’esprit que la gestion des problèmes a pour objet essentiel de prévenir les risques de perturbations ou d’interruption de nos services IT. Ainsi, si la création des problèmes est obligatoire lors de la survenue d’un incident majeur ou significatif, nous conseillons fortement de suivre au travers de ce processus tout type d’amélioration et de plan permettant de faire baisser les risques pesant sur les services IT.
+
+3 facteurs de risques 
+1- L'impact maximum pour nos clients et métiers que pourrait engendrer une occurence  du problème
+2- La fréquence maximum supposée d'apparition de nouvelles occurrences du problème 
+3- La complexité et/ou le cout de traitement de chacune des occurrences du problème
+
+Les 3 facteurs permettent de calculer un niveau de risque associé au problème et cela sert à priorisé les problèmes entre eux 
+
+Chaque niveau de risque de chaque problème permet de les compoarer et donc de les prioriser
+
+On enrégistre les actions correctrices du problème dans le backlog-> les actions seront priorisées en fonction du risque associé aux problèmes
+actions correctrices correctement exécutées -> réévaluer le niveau de risque du problème -> diminuer la réquence d'approrition du problème ou minimiser les impacts-> 
+permet de voir le risque résidule associé au problème
+-> lorsque le risque résiduel devient acceptable pour la qualité de service attendue -> on abandonne certaines actions correctrice -> acceptation du risque résidul.
+
+
+
+Mike a correctement identifié la cause principale du problème, mais il a également oublié un détail important lors de l’incident. C’est l’utilisatrice du service elle-même qui a remonté l’alerte au support, alors que celui-ci aurait dû disposer des moyens de détection en amont du problème de capacité afin de le prévenir, par exemple en mesurant l’activité du service et la charge de ses principaux composants techniques.
+
+Ainsi, la cause principale du problème est bien le défaut de capacité de la base de données, le défaut de monitoring du service est considéré comme une cause secondaire, ou une vulnérabilité du service. La gestion des problèmes vise à identifier et traiter l’ensemble des causes, et pas seulement la cause principale.
+
+-> l'ensemble des causes ou vulnérabilités a traiter lors de l'investigation d'un problème
+
+Les méthode :
+-> le diagramme d'Ishikawa ou le pareto 
+-> La gègle des 5 pourquoi -> consiste simplement à rechercher le pourquoi du pourquoi de l'incident afin de circonscrire rapidement les multiples causes possibles ou facteurs aggravantsde l'incident
+
+-> Exécution des actions correctrices -> étape de résolution du problème
+
+
+La revue des problèmes consiste à réunir les acteurs clés en charge de la résolution des problèmes afin d’en assurer le suivi et de prendre les bonnes décisions
+-> une revue régulière à minima mensuelle , dela liste des problèmes du périmetre considéré et leurs risque associés 
+
+
+Bon à savoir
+Le propriétaire du problème doit être en capacité de fournir l’état d’avancement des actions correctrices. Aussi, sauf en cas de besoin d’expertise spécifique, la présence des personnes affectées aux actions correctrices n’est pas nécessaire. En revanche, la présence du propriétaire du service, du responsable IT du service et du propriétaire du problème est essentielle pour l’efficacité de la revue des problèmes.
+
+
+
+Les décisions attendues lors de cette revue sont les suivantes :
+
+Modifier l’évaluation du risque du problème (par exemple suite à l'exécution d’une des actions correctrices, ou un complément d’investigation)
+Décider de la clôture d’un problème par la finalisation du plan d’action
+Décider de l’acceptation du risque résiduel par le propriétaire du service
+
+
+L'utilisateur n'est pas un acteur de ce processus.
+
+Le process owner pas impliqué dans la gestion opérationnelle.
+
+Les personnes auxquelles on a affecté des tâches de remédiation n'ont pas nécessairement la vue d'ensemble du plan d'action d'un problème
+
+Support IT
+
+Enregistre et analyse les problèmes
+Coordonne les plans d’actions permettant d’apporter les corrections nécessaires
+Contribue à définir les plans d'actions
+Evalue les risques
+
+Product Owner 
+
+Profil clé avec rôle de Product owner
+Responsable de la priorisation des problèmes et des plans d’action correctives
+Responsable de l'acceptation des risques associés aux problèmes
+
+It manager 
+
+Porte la fonction de Problem manager
+Responsable des traitements des problèmes et garant de la bonne exécution du processus
+Contrôle l’activité et produit les indicateurs de performance sur son périmètre
+
+
+Process officer 
+
+N’intervient pas directement dans la gestion des problèmes
+Définit les processus, les règles et les bonnes pratiques
+Surveille leur bonne application
+Mesure la performance pour identifier les axes d’amélioration
